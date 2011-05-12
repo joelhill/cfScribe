@@ -1,6 +1,6 @@
 ﻿<cfif isdefined("form.btnSubmit")>
-	<cfset session.user.getUserGamesLeagues = application.cfYahooFantasySportsAPI.getUserGamesLeagues(accessToken=session.user.accessToken,
-																		   		  					  gameKeys="253")>
+	<cfset session.user.getUserGamesLeagues = session.cfYahooFantasySportsAPI.getUserGamesLeagues(accessToken=session.user.accessToken,
+																		   		  				  gameKeys="253")>
 	<cfdump var="#session.user.getUserGamesLeagues.getBody()#"><cfabort>
 </cfif>
 
@@ -10,8 +10,9 @@
 		<div id="main">
 			SuccessFully logged In
 			<cfform action="#CGI.SCRIPT_NAME#" name="frmYahooGet">
-				<cfdump var="#session.user.getUserGames#">
-				<cfinput type="submit" name="btnSubmit" value="Get Data from Yahoo">	
+				<cfinput type="submit" name="btnSubmit" value="Get More Data from Yahoo">
+				<br />
+				<cfdump var="#session.user.getUserGames.getBody()#">	
 			</cfform>
 		</div>
 		</cfoutput>

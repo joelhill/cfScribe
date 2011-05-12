@@ -27,8 +27,8 @@
 			<cfargument name="accessToken" required="true">
 			<cfargument name="gameKeys" required="true" hint="Game Keys found here: http://developer.yahoo.com/fantasysports/guide/game-resource.html">
 			<cfset var local = {}>
-			<cfset local.request = setRequest("http://fantasysports.yahooapis.com/fantasy/v2/users;use_login=1/games;game_keys=#arguments.gameKeys#/leagues")>
-			<cfset local.signRequest = setSignRequest(accessToken=arguments.accessToken,request=local.request)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest("http://fantasysports.yahooapis.com/fantasy/v2/users;use_login=1/games;game_keys=#arguments.gameKeys#/leagues")>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=arguments.accessToken,request=local.request)>
 			<cfreturn local.request.send() />
 	</cffunction>
 	

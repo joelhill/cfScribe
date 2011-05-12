@@ -2,13 +2,19 @@
 <cfparam name="url.oauth_verifier" default="" />
 
 <cfif isdefined("form.btnSubmit")>
-	<cflocation url="#application.cfscribe.getAuthorizationUrl(application.cfscribe.getRequestToken())#" addtoken="false">
+		<!--- Create our session to store the required keys for this user --->
+		<cfset session.user = {}>
+		<!--- Create our cfScribe object --->
+		<cfset session.cfscribe = createObject("component", "cfScribe").init()>
+		<!--- Create our cfYahooFantasySportsAPI object --->
+		<cfset session.cfYahooFantasySportsAPI = createObject("component", "cfYahooFantasySportsAPI").init(cfScribeObject=session.cfscribe)>
+		<cflocation url="#session.cfscribe.getAuthorizationUrl(session.cfscribe.getRequestToken())#" addtoken="false">
 </cfif>
 
 <cfif len(url.oauth_token) AND len(url.oauth_verifier)>
-	<cfset session.user.verifier = application.cfscribe.getVerifier(url.oauth_verifier)>
-	<cfset session.user.accessToken = application.cfscribe.getAccessToken(session.user.verifier)>
-	<cfset session.user.getUserGames = application.cfYahooFantasySportsAPI.getUserGames(accessToken=session.user.accessToken)>
+	<cfset session.user.verifier = session.cfscribe.getVerifier(url.oauth_verifier)>
+	<cfset session.user.accessToken = session.cfscribe.getAccessToken(session.user.verifier)>
+	<cfset session.user.getUserGames = session.cfYahooFantasySportsAPI.getUserGames(accessToken=session.user.accessToken)>
 	<cflocation url="yahooSuccess.cfm" addtoken="false" />
 </cfif>
 

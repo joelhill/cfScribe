@@ -6,31 +6,19 @@
 
     <!--- INITIALISATION --->
 	<cffunction name="init" returntype="Any">
-		<cfargument name="consumerKey" required="true">
-		<cfargument name="consumerSecret" required="true">
-		<cfargument name="authKey" type="string" required="false" default="">
-		<cfargument name="authSecret" type="string" required="false" default="">
-		<cfargument name="scribePath" type="string" hint="absolute path to the scribe jar" default="">
-		<cfargument name="commonsCodecPath" type="string" hint="absolute path to the commons-codec jar" default="">
-		<cfargument name="callback" required="false" hint="call back url from api" default="">
-        
 		<cfset var local = {}>
-		<cfset var paths = []>
-		<cfset variables.instance.consumerKey = arguments.consumerKey>
-		<cfset variables.instance.consumerSecret = arguments.consumerSecret>
-		<cfset variables.instance.authKey = arguments.authKey>
-		<cfset variables.instance.authSecret = arguments.authSecret>
-		
-		<cfset paths[1] = arguments.scribePath>
-		<cfset paths[2] = arguments.commonsCodecPath>
-		<cfset variables.instance.javaloader = createObject("component", "components.javaloader.JavaLoader").init(paths)>
+		<cfset local.config = createObject("component", "config").init()>
+		<cfset local.paths = []>
+		<cfset local.paths[1] = local.config.getScribePath()>
+		<cfset local.paths[2] = local.config.getCommonsCodecPath()>
+		<cfset variables.instance.javaloader = createObject("component", "components.javaloader.JavaLoader").init(local.paths)>
 		<cfset variables.instance.YahooApi = variables.instance.javaloader.create("org.scribe.builder.api.YahooApi")>
 		<cfset variables.instance.verb = variables.instance.javaloader.create("org.scribe.model.Verb")>
-		<cfset variables.instance.scribeService = variables.instance.javaloader.create("org.scribe.builder.ServiceBuilder").init()
+		<cfset variables.instance.scribeService = variables.instance..javaloader.create("org.scribe.builder.ServiceBuilder").init()
 									   			  .provider(variables.instance.YahooApi.getClass())
-									   			  .apiKey(variables.instance.consumerKey)
-									   			  .apiSecret(variables.instance.consumerSecret)
-									   			  .callback(arguments.callback)
+									   			  .apiKey(local.config.getConsumerKey())
+									   			  .apiSecret(local.config.getConsumerSecret())
+									   			  .callback(local.config.getCallback())
 									   			  .build()>
 		<cfreturn this />
 	</cffunction>
@@ -62,10 +50,7 @@
 	<!--- SETTER FUNCTIONS---> 
 	<cffunction name="setRequest" output="false" access="public" returntype="String">
 		<cfargument name="URI" required="true">
-		<cfset var local = {}>
-		<cfset local.javaloader =  variables.instance.javaloader>
-		<cfset local.setRequest = local.javaloader.create("org.scribe.model.OAuthRequest").init(variables.instance.verb.get,arguments.URI)>
-		<cfreturn local.setRequest /> 
+		<cfreturn variables.instance.javaloader.create("org.scribe.model.OAuthRequest").init(variables.instance.verb.get,arguments.URI) /> 
 	</cffunction>
 	
 	<cffunction name="setSignRequest" output="false" access="public" returntype="String">
