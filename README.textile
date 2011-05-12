@@ -1,6 +1,6 @@
 h2. cfScribe, the simple OAuth Coldfusion lib!
 
-h3. cfScribe runs on top of "fernandezpablo85 / scribe-java":"examples folder":http://github.com/fernandezpablo85/scribe-java/ library that supports all major 1.0a and 2.0 OAuth APIs out-of-the-box:
+h3. cfScribe runs on top of "fernandezpablo85 / scribe-java":http://github.com/fernandezpablo85/scribe-java/ library that supports all major 1.0a and 2.0 OAuth APIs out-of-the-box:
 
 * Google
 
@@ -19,10 +19,6 @@ h3. cfScribe runs on top of "fernandezpablo85 / scribe-java":"examples folder":h
 * Vimeo
 
 * Yammer
-
-Check the "Getting Started":http://wiki.github.com/fernandezpablo85/scribe-java/getting-started page and start rocking!
-
-h1. Please Read the "FAQ":http://wiki.github.com/fernandezpablo85/scribe-java/faq before creating an issue :)
 
 h1. About me
 
