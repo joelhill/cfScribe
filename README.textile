@@ -1,4 +1,4 @@
-h2. cfScribe, the simple OAuth Coldfusion lib!!!
+h2. cfScribe, the simple OAuth Coldfusion lib!
 
 h3. cfScribe runs on top of "fernandezpablo85 / scribe-java":http://github.com/fernandezpablo85/scribe-java/ library that supports all major 1.0a and 2.0 OAuth APIs out-of-the-box:
 
