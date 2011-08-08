@@ -12,7 +12,8 @@
 		<cfset local.paths[1] = local.config.getScribePath()>
 		<cfset local.paths[2] = local.config.getCommonsCodecPath()>
 		<cfset variables.instance.javaloader = createObject("component", "components.javaloader.JavaLoader").init(local.paths)>
-		<cfset variables.instance.YahooApi = variables.instance.javaloader.create("org.scribe.builder.api.YahooApi")>
+		<cfset variables.instance.TwitterApi = variables.instance.javaloader.create("org.scribe.builder.api.TwitterApi")>
+        <cfset variables.instance.YahooApi = variables.instance.javaloader.create("org.scribe.builder.api.YahooApi")>
 		<cfset variables.instance.verb = variables.instance.javaloader.create("org.scribe.model.Verb")>
 		<cfset variables.instance.scribeService = variables.instance..javaloader.create("org.scribe.builder.ServiceBuilder").init()
 									   			  .provider(variables.instance.YahooApi.getClass())
