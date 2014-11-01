@@ -116,8 +116,6 @@
 		<!--- scribe doesn't create a multipart request for us, so we have to create it ourselves --->
 		<!--- start by ini'ing the classes we need to build a multipart request --->
 		<cfset variables.instance.ctEntity = variables.instance.javaloader.create("org.apache.http.entity.ContentType")>
-		<cfset variables.instance.mpEntity = variables.instance.javaloader.create("org.apache.http.entity.mime.MultipartEntity")>
-		<cfset variables.instance.mpMode = variables.instance.javaloader.create("org.apache.http.entity.mime.HttpMultipartMode")>
 		<cfset variables.instance.mpBuilder = variables.instance.javaloader.create("org.apache.http.entity.mime.MultipartEntityBuilder")>
 
 		<!--- read the file into binary and encode it --->
@@ -125,29 +123,29 @@
 			<cffile action="readbinary" file="#arguments.media#" variable="theBinaryFile" />
 		</cflock>
 
-		<cfset var imageContentType = variables.instance.ctEntity.MULTIPART_FORM_DATA>
 		<cfset var reqEntity = variables.instance.mpBuilder.create()>
-
-		<cfset reqEntity.addBinaryBody("image",
-										theBinaryFile,
-										imageContentType,
-										"test.jpg"
-										)>
-		<cfset var msg = reqEntity.build()>
-		<cfset var bos = createObject("java", "java.io.ByteArrayOutputStream")>
-		<cfset bos.init(msg.getContentLength())>
-		<cfset msg.writeTo(bos)>
-		<cfset objRequest.addPayload(bos.toByteArray())>
-		<cfset var contentType = msg.getContentType()>
-		<cfset objRequest.addHeader(contentType.getName(), contentType.getValue())>
 
 		<cfloop collection="#arguments.stctParams#" item="theVar">
 			<!--- only add a param if it contains a value --->
 			<cfif structFind(arguments.stctParams, theVar) neq "">
 				<!--- <cfset objRequest.addPayload(theVar, structFind(arguments.stctParams, theVar))> --->
-				<cfset objRequest.addBodyParameter(theVar, structFind(arguments.stctParams, theVar))>
+				<cfset reqEntity.addTextBody(theVar, structFind(arguments.stctParams, theVar), variables.instance.ctEntity.TEXT_PLAIN)>
 			</cfif>
 		</cfloop>
+
+		<cfset reqEntity.addBinaryBody("image",
+										theBinaryFile,
+										variables.instance.ctEntity.MULTIPART_FORM_DATA,
+										GetFileFromPath(arguments.media)
+										)>
+
+		<cfset var bos = createObject("java", "java.io.ByteArrayOutputStream").init()>
+		<cfset var msg = reqEntity.build()>
+		<cfset msg.writeTo(bos)>
+		<cfset var contentType = msg.getContentType()>
+		<cfset objRequest.addHeader("Content-length", msg.getContentLength())>
+		<cfset objRequest.addHeader(contentType.getName(), contentType.getValue())>
+		<cfset objRequest.addPayload(bos.toByteArray())>
 
 		<cfreturn objRequest>
 	</cffunction>

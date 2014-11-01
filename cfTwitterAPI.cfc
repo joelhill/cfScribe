@@ -111,8 +111,8 @@
 			<cfdump var="#local.request#">
 			<cfdump var="#local.request.getVerb().toString()#">
 			<cfdump var="#local.request.getCompleteUrl()#">
+			<cfdump var="#local.request.getBodyParams()#">
 			<cfdump var="#local.request.getBodyContents()#">
-			<cfabort>
 
 			<cfreturn local.request.send() />
 	</cffunction>
