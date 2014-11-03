@@ -114,55 +114,52 @@
 		<cfargument name="media" required="true" type="string" hint="local system path to media file">
 
 		<!--- scribe doesn't create a multipart request for us, so we have to create it ourselves --->
-		<!--- start by ini'ing the classes we need to build a multipart request --->
+		<!--- start by init'ing the classes we need to build a multipart request --->
 		<cfset variables.instance.ctEntity = variables.instance.javaloader.create("org.apache.http.entity.ContentType")>
 		<cfset variables.instance.mpBuilder = variables.instance.javaloader.create("org.apache.http.entity.mime.MultipartEntityBuilder")>
 
-		<!--- read the file into binary and encode it --->
+		<!--- TODO checkmedia --->
+
+		<!--- read the file into binary --->
 		<cflock type="readonly" name="MimeLock#Hash(arguments.media)#" timeout="10" throwontimeout="no">
 			<cffile action="readbinary" file="#arguments.media#" variable="theBinaryFile" />
 		</cflock>
 
+		<!--- create a new http request entity that we can add our image and params to --->
 		<cfset var reqEntity = variables.instance.mpBuilder.create()>
 
+		<!--- add the text (form field) params --->
 		<cfloop collection="#arguments.stctParams#" item="theVar">
 			<!--- only add a param if it contains a value --->
 			<cfif structFind(arguments.stctParams, theVar) neq "">
-				<!--- <cfset objRequest.addPayload(theVar, structFind(arguments.stctParams, theVar))> --->
 				<cfset reqEntity.addTextBody(theVar, structFind(arguments.stctParams, theVar), variables.instance.ctEntity.TEXT_PLAIN)>
 			</cfif>
 		</cfloop>
 
+		<!--- add the image as multipart binary data --->
 		<cfset reqEntity.addBinaryBody("image",
 										theBinaryFile,
 										variables.instance.ctEntity.MULTIPART_FORM_DATA,
 										GetFileFromPath(arguments.media)
 										)>
 
+		<!--- add the image to a binary output stream that we'll need to extract values from to properly form our request --->
 		<cfset var bos = createObject("java", "java.io.ByteArrayOutputStream").init()>
 		<cfset var msg = reqEntity.build()>
 		<cfset msg.writeTo(bos)>
 		<cfset var contentType = msg.getContentType()>
 		<cfset objRequest.addHeader("Content-length", msg.getContentLength())>
 		<cfset objRequest.addHeader(contentType.getName(), contentType.getValue())>
+
+		<!--- add our newly formed http request (with images and fields) to our OAuth request object --->
 		<cfset objRequest.addPayload(bos.toByteArray())>
 
 		<cfreturn objRequest>
 	</cffunction>
 
-	<cffunction name="setRequestMedia" output="true" access="public" returntype="string" hint="I take a media object, convert it to base64, and add it to the request payload">
-	</cffunction>
-
 	<!--- checkMedia() function courtesy of Matt Gifford/MonkehTweets and available at https://github.com/coldfumonkeh/monkehTweets  --->
 	<cffunction name="checkMedia" access="package" output="false" hint="Check the media to be uploaded into the status update.">
 		<cfargument name="file" required="true" type="any" hint="The file to upload and update the status with." />
-
-		<cfimage action = "info"
-				source = "#arguments.file#"
-				structname = "stctImageInfo">
-		<cfdump var="#stctImageInfo#">
-		<cfabort>
-
 		<cfset var strFileData = getMagicMime(arguments.file) />
 		<cfset var strFileList	=	'image/gif, image/jpeg, image/png' />
 		<cfset var stuReturnData	=	true />

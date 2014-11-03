@@ -97,23 +97,12 @@
 			<cfset var local = {}>
 			<cfset local.method = "post">
 			<cfset local.accessToken = arguments.accessToken>
+			<cfset local.image = arguments.image>			
 			<cfset structDelete(arguments, "accessToken")>
-			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/account/update_profile_background_image.json",method=local.method)>
-			<!--- <cfdump var="#local.request#"> --->
-			<!--- <cfdump var="#local.request.addHeader("Content-type", "multipart/form-data; boundary=")#"> --->
-			<!--- <cfdump var="#local.request.getHeaders()#"> --->
-			<cfset local.image = arguments.image>
 			<cfset structDelete(arguments, "image")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/account/update_profile_background_image.json",method=local.method)>
 			<cfset local.request = variables.instance.cfScribeObject.setRequestParamsWithMedia(media=local.image,stctParams=arguments,objRequest=local.request)>
-			<!--- <cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)> --->
 			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
-
-			<cfdump var="#local.request#">
-			<cfdump var="#local.request.getVerb().toString()#">
-			<cfdump var="#local.request.getCompleteUrl()#">
-			<cfdump var="#local.request.getBodyParams()#">
-			<cfdump var="#local.request.getBodyContents()#">
-
 			<cfreturn local.request.send() />
 	</cffunction>
 
