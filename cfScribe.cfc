@@ -74,37 +74,26 @@
 
 	<cffunction name="setRequestParams" output="false" access="public" returntype="string" hint="I take a request object and add a set of params to it">
 		<cfargument name="method" required="true" type="string">
-		<cfargument name="multipart" required="true" type="boolean" default="0">
 		<cfargument name="stctParams" required="true" type="struct">
 		<cfargument name="objRequest" required="true" type="string">
-
-		<cfif arguments.multipart>
-			<cfloop collection="#arguments.stctParams#" item="theVar">
-				<!--- only add a param if it contains a value --->
-				<cfif structFind(arguments.stctParams, theVar) neq "">
-					<cfset objRequest.addPayload(theVar, structFind(arguments.stctParams, theVar))>
-				</cfif>
-			</cfloop>
-		<cfelse>
-			<cfswitch expression="#arguments.method#">
-				<cfcase value="post">
-					<cfloop collection="#arguments.stctParams#" item="theVar">
-						<!--- only add a param if it contains a value --->
-						<cfif structFind(arguments.stctParams, theVar) neq "">
-							<cfset objRequest.addBodyParameter(theVar, structFind(arguments.stctParams, theVar))>
-						</cfif>
-					</cfloop>
-				</cfcase>
-				<cfdefaultcase>
-					<cfloop collection="#arguments.stctParams#" item="theVar">
-						<!--- only add a param if it contains a value --->
-						<cfif structFind(arguments.stctParams, theVar) neq "">
-							<cfset objRequest.addQuerystringParameter(theVar, structFind(arguments.stctParams, theVar))>
-						</cfif>
-					</cfloop>
-				</cfdefaultcase>
-			</cfswitch>
-		</cfif>
+		<cfswitch expression="#arguments.method#">
+			<cfcase value="post">
+				<cfloop collection="#arguments.stctParams#" item="theVar">
+					<!--- only add a param if it contains a value --->
+					<cfif structFind(arguments.stctParams, theVar) neq "">
+						<cfset objRequest.addBodyParameter(theVar, structFind(arguments.stctParams, theVar))>
+					</cfif>
+				</cfloop>
+			</cfcase>
+			<cfdefaultcase>
+				<cfloop collection="#arguments.stctParams#" item="theVar">
+					<!--- only add a param if it contains a value --->
+					<cfif structFind(arguments.stctParams, theVar) neq "">
+						<cfset objRequest.addQuerystringParameter(theVar, structFind(arguments.stctParams, theVar))>
+					</cfif>
+				</cfloop>
+			</cfdefaultcase>
+		</cfswitch>
 		<cfreturn objRequest>
 	</cffunction>
 
