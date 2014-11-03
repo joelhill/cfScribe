@@ -13,11 +13,11 @@ h3. cfScribe runs on top of "fernandezpablo85 / scribe-java":http://github.com/f
 * Yammer
 * many more...
 
-*cfScribe is still in development*
+_cfScribe is still in development_
 
 For questions, please contact the developers below.
 
 h2. About Us
 
 Follow Joel Hill: "@jiggidyuo":http://twitter.com/jiggidyuo
-Follow Jordan Michaels: "@jiggidyuo":http://twitter.com/utdream
+Follow Jordan Michaels: "@utdream":http://twitter.com/utdream
