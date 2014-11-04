@@ -16,13 +16,19 @@
 		<cfset variables.instance.javaloader = createObject("component", "components.javaloader.JavaLoader").init(local.paths)>
 		<cfset variables.instance.TwitterApi = variables.instance.javaloader.create("org.scribe.builder.api.TwitterApi$Authenticate")>
 		<cfset variables.instance.verb = variables.instance.javaloader.create("org.scribe.model.Verb")>
+
+		<cfdump var="#variables.instance.TwitterApi#">
+
 		<cfset variables.instance.scribeService = variables.instance.javaloader.create("org.scribe.builder.ServiceBuilder").init()
-									   			  .provider(variables.instance.TwitterApi.getClass())
+									   			  .provider(variables.instance.TwitterApi.getClass(force_login=1))
 									   			  .apiKey(local.config.getConsumerKey())
 									   			  .apiSecret(local.config.getConsumerSecret())
 									   			  .callback(local.config.getCallback())
 									   			  .build()>
-		<cfreturn this />
+	<cfdump var="#variables.instance.scribeService#">
+	<cfabort>
+
+	<cfreturn this />
 	</cffunction>
 
 
@@ -101,6 +107,7 @@
 		<cfargument name="objRequest" required="true" type="string">
 		<cfargument name="stctParams" required="true" type="struct">
 		<cfargument name="media" required="true" type="string" hint="local system path to media file">
+		<cfargument name="mediaLabel" required="true" default="image" type="string" hint="The label the API needs to identify the image value">
 
 		<!--- scribe doesn't create a multipart request for us, so we have to create it ourselves --->
 		<!--- start by init'ing the classes we need to build a multipart request --->
@@ -126,7 +133,7 @@
 		</cfloop>
 
 		<!--- add the image as multipart binary data --->
-		<cfset reqEntity.addBinaryBody("image",
+		<cfset reqEntity.addBinaryBody(arguments.mediaLabel,
 										theBinaryFile,
 										variables.instance.ctEntity.MULTIPART_FORM_DATA,
 										GetFileFromPath(arguments.media)

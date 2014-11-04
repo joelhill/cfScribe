@@ -106,10 +106,92 @@
 			<cfreturn local.request.send() />
 	</cffunction>
 
+	<cffunction name="postUpdateProfileColors" output="false" access="public" returntype="String" 
+		hint="Sets one or more hex values that control the color scheme of the authenticating user’s profile page on twitter.com. Each parameter’s value must be a valid hexidecimal value, and may be either three or six characters (ex: fff or ffffff).">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="profile_background_color" required="false" hint="Profile background color. (Example Values: 3D3D3D)">
+			<cfargument name="profile_link_color" required="false" hint="Profile link color. (Example Values: 0000FF)">
+			<cfargument name="profile_sidebar_border_color" required="false" hint="Profile sidebar’s border color. (Example Values: 0F0F0F)">
+			<cfargument name="profile_sidebar_fill_color" required="false" hint="Profile sidebar’s background color. (Example Values: 00FF00)">
+			<cfargument name="profile_text_color" required="false" hint="Profile text color. (Example Values: 000000)">
+			<cfargument name="include_entities" required="false" hint="The entities node will not be included when set to false.">
+			<cfargument name="skip_status" required="false" hint="When set to either true, t or 1 statuses will not be included in the returned user objects.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/account/update_profile_colors.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postUpdateProfileImage" output="false" access="public" returntype="String" 
+		hint="Updates the authenticating user’s profile image. Note that this method expects raw multipart data, not a URL to an image.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="image" required="true" hint="The avatar image for the profile, base64-encoded. Must be a valid GIF, JPG, or PNG image of less than 700 kilobytes in size. Images with width larger than 400 pixels will be scaled down. Animated GIFs will be converted to a static GIF of the first frame, removing the animation.">
+			<cfargument name="include_entities" required="false" hint="The entities node will not be included when set to false.">
+			<cfargument name="skip_status" required="false" hint="When set to either true, t or 1 statuses will not be included in the returned user objects.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset local.image = arguments.image>	
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset structDelete(arguments, "image")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/account/update_profile_image.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParamsWithMedia(media=local.image,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postRemoveProfileBanner" output="false" access="public" returntype="String" 
+		hint="Removes the uploaded profile banner for the authenticating user. Returns HTTP 200 upon success.">
+			<cfargument name="accessToken" required="true">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postUpdateProfileBanner" output="false" access="public" returntype="String" 
+		hint="https://api.twitter.com/1.1/account/update_profile_banner.json">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="banner" required="true" hint="The local image path of the image being uploaded as the user’s new profile banner.">
+			<cfargument name="width" required="false" hint="The width of the preferred section of the image being uploaded in pixels. Use with height, offset_left, and offset_top to select the desired region of the image to use.">
+			<cfargument name="height" required="false" hint="The height of the preferred section of the image being uploaded in pixels. Use with width, offset_left, and offset_top to select the desired region of the image to use.">
+			<cfargument name="offset_left" required="false" hint="The number of pixels by which to offset the uploaded image from the left. Use with height, width, and offset_top to select the desired region of the image to use.">
+			<cfargument name="offset_top" required="false" hint="The number of pixels by which to offset the uploaded image from the top. Use with height, width, and offset_left to select the desired region of the image to use.">
+			<!---
+			Response Code(s) Meaning:
+			200, 201, 202	Profile banner image succesfully uploaded
+			400				Either an image was not provided or the image data could not be processed
+			422				The image could not be resized or is too large.
+			--->
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset local.banner = arguments.banner>	
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset structDelete(arguments, "banner")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/account/update_profile_banner.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParamsWithMedia(
+																		media=local.banner,
+																		mediaLabel="banner",
+																		stctParams=arguments,
+																		objRequest=local.request
+																		)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
 	<!--- blank --->
 	<!---
 	<cffunction name="post" output="false" access="public" returntype="String" 
-		hint="Sets which device Twitter delivers updates to for the authenticating user. Sending none as the device parameter will disable SMS updates.">
+		hint="">
 			<cfargument name="accessToken" required="true">
 			<cfargument name="" required="false" hint="">
 			<cfargument name="" required="false" hint="">
