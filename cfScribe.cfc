@@ -16,19 +16,13 @@
 		<cfset variables.instance.javaloader = createObject("component", "components.javaloader.JavaLoader").init(local.paths)>
 		<cfset variables.instance.TwitterApi = variables.instance.javaloader.create("org.scribe.builder.api.TwitterApi$Authenticate")>
 		<cfset variables.instance.verb = variables.instance.javaloader.create("org.scribe.model.Verb")>
-
-		<cfdump var="#variables.instance.TwitterApi#">
-
 		<cfset variables.instance.scribeService = variables.instance.javaloader.create("org.scribe.builder.ServiceBuilder").init()
-									   			  .provider(variables.instance.TwitterApi.getClass(force_login=1))
+									   			  .provider(variables.instance.TwitterApi.getClass())
 									   			  .apiKey(local.config.getConsumerKey())
 									   			  .apiSecret(local.config.getConsumerSecret())
 									   			  .callback(local.config.getCallback())
 									   			  .build()>
-	<cfdump var="#variables.instance.scribeService#">
-	<cfabort>
-
-	<cfreturn this />
+		<cfreturn this />
 	</cffunction>
 
 
