@@ -6,6 +6,7 @@
 
     <!--- SERVICE INIT --->
 	<cffunction name="twitterInit" returntype="Any">
+		<cfargument name="force_login" type="boolean" required="true" default="false">
 		<cfset var local = {}>
 		<cfset local.config = createObject("component", "config").twitterInit()>
 		<cfset local.paths = []>
@@ -14,7 +15,11 @@
 		<cfset local.paths[3] = local.config.getHttpCorePath()>
 		<cfset local.paths[4] = local.config.getHttpMimePath()>
 		<cfset variables.instance.javaloader = createObject("component", "components.javaloader.JavaLoader").init(local.paths)>
-		<cfset variables.instance.TwitterApi = variables.instance.javaloader.create("org.scribe.builder.api.TwitterApi$AuthenticateForce")>
+		<cfif arguments.force_login>
+			<cfset variables.instance.TwitterApi = variables.instance.javaloader.create("org.scribe.builder.api.TwitterApi$AuthenticateForce")>
+		<cfelse>
+			<cfset variables.instance.TwitterApi = variables.instance.javaloader.create("org.scribe.builder.api.TwitterApi$Authenticate")>
+		</cfif>
 		<cfset variables.instance.verb = variables.instance.javaloader.create("org.scribe.model.Verb")>
 		<cfset variables.instance.scribeService = variables.instance.javaloader.create("org.scribe.builder.ServiceBuilder").init()
 									   			  .provider(variables.instance.TwitterApi.getClass())

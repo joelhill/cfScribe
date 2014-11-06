@@ -5,7 +5,7 @@
 		<!--- Create our session to store the required keys for this user --->
 		<cfset session.user = {}>
 		<!--- Create our cfScribe object --->
-		<cfset session.cfscribe = createObject("component", "cfScribe").twitterInit()>
+		<cfset session.cfscribe = createObject("component", "cfScribe").twitterInit(force_login=true)>
 		<!--- Create our twitter object --->
 		<cfset session.cfTwitterAPI = createObject("component", "cfTwitterAPI").init(cfScribeObject=session.cfscribe)>
         <cfif !isDefined("session.user.requestToken")>
@@ -71,34 +71,4 @@
         <script type="text/javascript" src="js/script.js"></script>   
 
     </body>
-
-    <!---
-	<body>
-		<cfoutput>
-		<div id="main">
-			<form class="col-md-12" action="#CGI.SCRIPT_NAME#">
-				<div class="row text-center">
-					<div class="col-md-4 col-sm-12">
-						<button type="button" class="btn btn-primary btn-block">Facebook</button>
-					</div>
-					<div class="col-md-4 col-sm-12">
-						<button type="button" class="btn btn-info btn-block">Twitter</button>
-					</div>
-					<div class="col-md-4 col-sm-12">
-						<button type="button" class="btn btn-danger btn-block">Google+</button>
-					</div>
-				</div>
-			</form>
-
-			<cfform action="#CGI.SCRIPT_NAME#" name="frmYahoo">
-				<cfinput type="submit" name="btnSubmit" value="Sign in with Yahoo">
-			</cfform>
-		</div>
-		</cfoutput>
-
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
-        <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="js/script.js"></script>
-	</body>
-	--->
 </html>
