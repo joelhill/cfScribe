@@ -7,7 +7,8 @@
 
 <cfset session.cfTwitterAPI = createObject("component", "cfTwitterAPI").init(cfScribeObject=session.cfscribe)>
 <!--- <cfset local.APIHit = session.cfTwitterAPI.getAccountSettings(accessToken=session.user.accessToken)> --->
-<cfset local.APIHit = session.cfTwitterAPI.getStatusesHomeTimeline(accessToken=session.user.accessToken
+<cfset local.APIHit = session.cfTwitterAPI.postStatusesDestroyID(accessToken=session.user.accessToken,
+															id="530230673957597185"
 															)>
 <!---
 <cfset local.APIHit = session.cfTwitterAPI.postUpdateProfileBackgroundImage(

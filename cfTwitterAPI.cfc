@@ -359,6 +359,73 @@
 			<cfreturn local.request.send() />
 	</cffunction>
 
+	<cffunction name="getStatusesRetweetsOfMe" output="false" access="public" returntype="String" 
+		hint="Returns the most recent tweets authored by the authenticating user that have been retweeted by others. This timeline is a subset of the user’s getStatusesUserTimeline()">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="count" required="false" hint="Specifies the number of records to retrieve. Must be less than or equal to 100. If omitted, 20 will be assumed.">
+			<cfargument name="since_id" required="false" hint="Returns results with an ID greater than (that is, more recent than) the specified ID. There are limits to the number of Tweets which can be accessed through the API. If the limit of Tweets has occured since the since_id, the since_id will be forced to the oldest ID available.">
+			<cfargument name="max_id" required="false" hint="Returns results with an ID less than (that is, older than) or equal to the specified ID.">
+			<cfargument name="trim_user" required="false" hint="When set to either true, t or 1, each tweet returned in a timeline will include a user object including only the status authors numerical ID. Omit this parameter to receive the complete user object.">
+			<cfargument name="include_entities" required="false" hint="The tweet entities node will not be included when set to false.">
+			<cfargument name="include_user_entities" required="false" hint="The user entities node will not be included when set to false.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/statuses/retweets_of_me.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getStatusesRetweetsID" output="false" access="public" returntype="String" 
+		hint="Returns a collection of the 100 most recent retweets of the tweet specified by the id parameter.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="id" required="false" hint="The numerical ID of the desired status.">
+			<cfargument name="count" required="false" hint="Specifies the number of records to retrieve. Must be less than or equal to 100.">
+			<cfargument name="trim_user" required="false" hint="When set to either true, t or 1, each tweet returned in a timeline will include a user object including only the status authors numerical ID. Omit this parameter to receive the complete user object.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/statuses/retweets/" & arguments.id & ".json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getStatusesShowID" output="false" access="public" returntype="String" 
+		hint="Returns a single Tweet, specified by the id parameter. The Tweet’s author will also be embedded within the tweet. See getStatusesLookup() for getting Tweets in bulk (up to 100 per call).">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="id" required="true" hint="The numerical ID of the desired Tweet.">
+			<cfargument name="trim_user" required="false" hint="When set to either true, t or 1, each tweet returned in a timeline will include a user object including only the status authors numerical ID. Omit this parameter to receive the complete user object.">
+			<cfargument name="include_my_retweet" required="false" hint="When set to either true, t or 1, any Tweets returned that have been retweeted by the authenticating user will include an additional current_user_retweet node, containing the ID of the source status for the retweet.">
+			<cfargument name="include_entities" required="false" hint="The entities node will be disincluded when set to false.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/statuses/show.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postStatusesDestroyID" output="false" access="public" returntype="String" 
+		hint="Destroys the status specified by the required ID parameter. The authenticating user must be the author of the specified status. Returns the destroyed status if successful.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="id" required="false" hint="The numerical ID of the desired status.">
+			<cfargument name="trim_user" required="false" hint="When set to either true, t or 1, each tweet returned in a timeline will include a user object including only the status authors numerical ID. Omit this parameter to receive the complete user object.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/statuses/destroy/" & arguments.id & ".json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
 	<!--- blank --->
 	<!---
 	<cffunction name="get" output="false" access="public" returntype="String" 
