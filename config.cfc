@@ -10,7 +10,7 @@
 		<cfset variables.instance.consumerSecret = "">
 		<cfset variables.instance.authKey = "">
 		<cfset variables.instance.authSecret = "">
-		<cfset variables.instance.scribePath = "#GetDirectoryFromPath(GetCurrentTemplatePath())#components/scribe-1.3.5.jar">
+		<cfset variables.instance.scribePath = "#GetDirectoryFromPath(GetCurrentTemplatePath())#components/scribe-1.3.7-custom.jar">
 		<cfset variables.instance.commonsCodecPath = "#GetDirectoryFromPath(GetCurrentTemplatePath())#components/commons-codec-1.5.jar">
 		<cfset variables.instance.httpCorePath = "#GetDirectoryFromPath(GetCurrentTemplatePath())#components/httpcore-4.3.2.jar">
 		<cfset variables.instance.httpMimePath = "#GetDirectoryFromPath(GetCurrentTemplatePath())#components/httpmime-4.3.5.jar">
