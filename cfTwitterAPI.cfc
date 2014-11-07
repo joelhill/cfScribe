@@ -379,7 +379,7 @@
 	</cffunction>
 
 	<cffunction name="getStatusesRetweetsID" output="false" access="public" returntype="String" 
-		hint="Returns a collection of the 100 most recent retweets of the tweet specified by the id parameter.">
+		hint="Returns a collection of the 100 most recent retweets of the tweet specified by the id parameter. For more than 100 retweeters, use getStatusesResteetersIDs().">
 			<cfargument name="accessToken" required="true">
 			<cfargument name="id" required="false" hint="The numerical ID of the desired status.">
 			<cfargument name="count" required="false" hint="Specifies the number of records to retrieve. Must be less than or equal to 100.">
@@ -421,6 +421,116 @@
 			<cfset local.accessToken = arguments.accessToken>
 			<cfset structDelete(arguments, "accessToken")>
 			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/statuses/destroy/" & arguments.id & ".json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postMediaUpload" output="false" access="public" returntype="String" 
+		hint="Uploading images with this method will provide you with media id's, which can then be used when publishing a new status with multiple media attachments. Details here: https://dev.twitter.com/rest/public/uploading-media-multiple-photos">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="image" required="true" hint="Supported image formats are PNG, JPG and GIF. Animated GIFs are now supported.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset local.image = arguments.image>	
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset structDelete(arguments, "image")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://upload.twitter.com/1.1/media/upload.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParamsWithMedia(media=local.image,mediaLabel="media",stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postStatusesUpdate" output="false" access="public" returntype="String" 
+		hint="Updates the authenticating user’s current status, also known as tweeting. For each update attempt, the update text is compared with the authenticating user’s recent tweets. Any attempt that would result in duplication will be blocked, resulting in a 403 error. Therefore, a user cannot submit the same status twice in a row.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="status" required="true" hint="The text of your status update, typically up to 140 characters. URL encode as necessary. t.co link wrapping may affect character counts. Use getHelpConfiguration to get the character count of t.co shortened links">
+			<cfargument name="in_reply_to_status_id" required="false" hint="The ID of an existing status that the update is in reply to.">
+			<cfargument name="possibly_sensitive" required="false" hint="If you upload Tweet media that might be considered sensitive content such as nudity, violence, or medical procedures, you should set this value to true.">
+			<cfargument name="lat" required="false" hint="The latitude of the location this tweet refers to. This parameter will be ignored unless it is inside the range -90.0 to +90.0 (North is positive) inclusive. It will also be ignored if there isn’t a corresponding long parameter.">
+			<cfargument name="long" required="false" hint="The longitude of the location this tweet refers to. The valid ranges for longitude is -180.0 to +180.0 (East is positive) inclusive. This parameter will be ignored if outside that range, if it is not a number, if geo_enabled is disabled, or if there not a corresponding lat parameter.">
+			<cfargument name="place_id" required="false" hint="A place in the world. (as defined by https://dev.twitter.com/overview/api/places)">
+			<cfargument name="display_coordinates" required="false" hint="Whether or not to put a pin on the exact coordinates a tweet has been sent from.">
+			<cfargument name="trim_user" required="false" hint="When set to either true, t or 1, each tweet returned in a timeline will include a user object including only the status authors numerical ID. Omit this parameter to receive the complete user object.">
+			<cfargument name="media_ids " required="false" hint="A list of media ids to associate with the Tweet. You may associated up to 4 media to a Tweet. Use postMediaUpload() to obtain media id's.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/statuses/update.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postStatusesRetweetID" output="false" access="public" returntype="String" 
+		hint="Retweets a tweet. Returns the original tweet with retweet details embedded.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="id" required="true" hint="The numerical ID of the desired status.">
+			<cfargument name="trim_user" required="false" hint="When set to either true, t or 1, each tweet returned in a timeline will include a user object including only the status authors numerical ID. Omit this parameter to receive the complete user object.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/statuses/retweet/" & arguments.id & ".json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<!--- postStatusesUpdateWithMedia() is depreciated. Use postStatusesUpdate() & postMediaUpload() instead. https://dev.twitter.com/rest/reference/post/statuses/update_with_media --->
+
+	<cffunction name="getStatusesOembed" output="false" access="public" returntype="String" 
+		hint="Returns a single Tweet, specified by either a Tweet web URL or the Tweet ID, in an oEmbed-compatible format. The returned HTML snippet will be automatically recognized as an Embedded Tweet when Twitter’s widget JavaScript is included on the page. (https://dev.twitter.com/rest/reference/get/statuses/oembed)">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="id" required="false" hint="The ID of the desired Tweet. Either the id or url parameters must be specified in a request. It is not necessary to include both.">
+			<cfargument name="url" required="false" hint="The URL-encoded URL of the Tweet to be embedded. Example: https%3A%2F%2Ftwitter.com%Interior%2Fstatus%2F507185938620219395">
+			<cfargument name="maxwidth" required="false" hint="The maximum width of a rendered Tweet in whole pixels. This value must be between 220 and 550 inclusive.">
+			<cfargument name="hide_media" required="false" hint="When set to true, t or 1 links in a Tweet are not expanded to photo, video, or link previews.">
+			<cfargument name="hide_thread" required="false" hint="When set to true, t or 1 a collapsed version of the previous Tweet in a conversation thread will not be displayed when the requested Tweet is in reply to another Tweet.">
+			<cfargument name="omit_script" required="false" hint="When set to true, t or 1 the <script> responsible for loading widgets.js will not be returned. Your webpages should include their own reference to widgets.js for use across all Twitter widgets including Embedded Tweets.">
+			<cfargument name="align" required="false" hint="Specifies whether the embedded Tweet should be floated left, right, or center in the page relative to the parent element. Valid values are left, right, center, and none. Defaults to none, meaning no alignment styles are specified for the Tweet.">
+			<cfargument name="related" required="false" hint="A comma-separated list of Twitter usernames related to your content. This value will be forwarded to Tweet action intents if a viewer chooses to reply, favorite, or retweet the embedded Tweet.">
+			<cfargument name="lang" required="false" hint="Request returned HTML and a rendered Tweet in the specified Twitter language supported by embedded Tweets.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/statuses/oembed.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getStatusesResteetersIDs" output="false" access="public" returntype="String" 
+		hint="Returns a collection of up to 100 user IDs belonging to users who have retweeted the tweet specified by the id parameter.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="id" required="true" hint="The numerical ID of the desired status.">
+			<cfargument name="cursor" required="false" hint="Causes the list of IDs to be broken into pages of no more than 100 IDs at a time. The number of IDs returned is not guaranteed to be 100 as suspended users are filtered out after connections are queried. If no cursor is provided, a value of -1 will be assumed, which is the first page.">
+			<cfargument name="stringify_ids" required="false" hint="Many programming environments will not consume our ids due to their size. Provide this option to have ids returned as strings instead.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/statuses/retweeters/ids.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getStatusesLookup" output="false" access="public" returntype="String" 
+		hint="Returns fully-hydrated tweet objects for up to 100 tweets per request, as specified by comma-separated values passed to the id parameter. This method is especially useful to get the details (hydrate) a collection of Tweet IDs.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="id" required="true" hint="A comma separated list of tweet IDs, up to 100 are allowed in a single request.">
+			<cfargument name="include_entities" required="false" hint="The entities node that may appear within embedded statuses will be disincluded when set to false.">
+			<cfargument name="trim_user" required="false" hint="When set to either true, t or 1, each tweet returned in a timeline will include a user object including only the status authors numerical ID. Omit this parameter to receive the complete user object.">
+			<cfargument name="map" required="false" hint="When using the map parameter, tweets that do not exist or cannot be viewed by the current user will still have their key represented but with an explicitly null value paired with it.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/statuses/lookup.json",method=local.method)>
 			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
 			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
 			<cfreturn local.request.send() />
