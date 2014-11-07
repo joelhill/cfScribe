@@ -536,6 +536,669 @@
 			<cfreturn local.request.send() />
 	</cffunction>
 
+	<cffunction name="getSearchTweets" output="false" access="public" returntype="String" 
+		hint="Returns a collection of relevant Tweets matching a specified query. Please note that Twitter’s search service and, by extension, the Search API is not meant to be an exhaustive source of Tweets. Not all Tweets will be indexed or made available via the search interface.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="q" required="true" hint="A UTF-8, URL-encoded search query of 500 characters maximum, including operators. Queries may additionally be limited by complexity.">
+			<cfargument name="geocode" required="false" hint="Returns tweets by users located within a given radius of the given latitude/longitude. The location is preferentially taking from the Geotagging API, but will fall back to their Twitter profile.">
+			<cfargument name="lang" required="false" hint="Restricts tweets to the given language, given by an ISO 639-1 code. Language detection is best-effort.">
+			<cfargument name="locale" required="false" hint="Specify the language of the query you are sending (only ja is currently effective). This is intended for language-specific consumers and the default should work in the majority of cases.">
+			<cfargument name="result_type" required="false" hint="Specifies what type of search results you would prefer to receive. The current default is “mixed.” Valid values include: * mixed: Include both popular and real time results in the response. * recent: return only the most recent results in the response * popular: return only the most popular results in the response.">
+			<cfargument name="count" required="false" hint="The number of tweets to return per page, up to a maximum of 100. Defaults to 15. This was formerly the “rpp” parameter in the old Search API.">
+			<cfargument name="until" required="false" hint="Returns tweets generated before the given date. Date should be formatted as YYYY-MM-DD. Keep in mind that the search index may not go back as far as the date you specify here.">
+			<cfargument name="since_id" required="false" hint="Returns results with an ID greater than (that is, more recent than) the specified ID. There are limits to the number of Tweets which can be accessed through the API. If the limit of Tweets has occured since the since_id, the since_id will be forced to the oldest ID available.">
+			<cfargument name="max_id" required="false" hint="Returns results with an ID less than (that is, older than) or equal to the specified ID.">
+			<cfargument name="include_entities " required="false" hint="The entities node will be disincluded when set to false.">
+			<cfargument name="callback" required="false" hint="If supplied, the response will use the JSONP format with a callback of the given name. The usefulness of this parameter is somewhat diminished by the requirement of authentication for requests to this endpoint.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/search/tweets.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>	
+
+	<!--- ---------------------- --->
+	<!--- DIRECT MESSAGE METHODS --->
+	<!--- ---------------------- --->
+
+	<cffunction name="getDirectMessages" output="false" access="public" returntype="String" 
+		hint="Returns the 20 most recent direct messages sent to the authenticating user. Includes detailed information about the sender and recipient user. You can request up to 200 direct messages per call, up to a maximum of 800 incoming DMs.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="since_id" required="false" hint="Returns results with an ID greater than (that is, more recent than) the specified ID. There are limits to the number of Tweets which can be accessed through the API. If the limit of Tweets has occured since the since_id, the since_id will be forced to the oldest ID available.">
+			<cfargument name="max_id" required="false" hint="Returns results with an ID less than (that is, older than) or equal to the specified ID.">
+			<cfargument name="count" required="false" hint="Specifies the number of direct messages to try and retrieve, up to a maximum of 200. The value of count is best thought of as a limit to the number of Tweets to return because suspended or deleted content is removed after the count has been applied. ">
+			<cfargument name="include_entities" required="false" hint="The entities node will not be included when set to false.">
+			<cfargument name="skip_status" required="false" hint="When set to either true, t or 1 statuses will not be included in the returned user objects.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/direct_messages.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getDirectMessagesSent" output="false" access="public" returntype="String" 
+		hint="Returns the 20 most recent direct messages sent by the authenticating user. Includes detailed information about the sender and recipient user. You can request up to 200 direct messages per call, up to a maximum of 800 outgoing DMs.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="since_id" required="false" hint="Returns results with an ID greater than (that is, more recent than) the specified ID. There are limits to the number of Tweets which can be accessed through the API. If the limit of Tweets has occured since the since_id, the since_id will be forced to the oldest ID available.">
+			<cfargument name="max_id" required="false" hint="Returns results with an ID less than (that is, older than) or equal to the specified ID.">
+			<cfargument name="count" required="false" hint="Specifies the number of records to retrieve. Must be less than or equal to 200.">
+			<cfargument name="page" required="false" hint="Specifies the page of results to retrieve.">
+			<cfargument name="include_entities" required="false" hint="The entities node will not be included when set to false.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/direct_messages/sent.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getDirectMessagesShow" output="false" access="public" returntype="String" 
+		hint="Returns a single direct message, specified by an id parameter. Like the /1.1/direct_messages.format request, this method will include the user objects of the sender and recipient.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="id" required="true" hint="The ID of the direct message.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/direct_messages/show.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postDirectMessagesDestroy" output="false" access="public" returntype="String" 
+		hint="Destroys the direct message specified in the required ID parameter. The authenticating user must be the recipient of the specified direct message.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="id" required="false" hint="The ID of the direct message to delete.">
+			<cfargument name="include_entities" required="false" hint="The entities node will not be included when set to false.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/direct_messages/destroy.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postDirectMessagesNew" output="false" access="public" returntype="String" 
+		hint="Sends a new direct message to the specified user from the authenticating user. Requires both the user and text parameters and must be a POST. Returns the sent message in the requested format if successful.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="user_id" required="false" hint="The ID of the user who should receive the direct message. Helpful for disambiguating when a valid user ID is also a valid screen name.">
+			<cfargument name="screen_name" required="false" hint="The screen name of the user who should receive the direct message. Helpful for disambiguating when a valid screen name is also a user ID.">
+			<cfargument name="text" required="false" hint="The text of your direct message. Be sure to URL encode as necessary, and keep the message under 140 characters.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/direct_messages/new.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<!--- -------------------------- --->
+	<!--- FRIENDS & FOLLOWER METHODS --->
+	<!--- -------------------------- --->
+
+	<cffunction name="getFriendsIDs" output="false" access="public" returntype="String" 
+		hint="Returns a cursored collection of user IDs for every user the specified user is following (otherwise known as their “friends”). At this time, results are ordered with the most recent following first — however, this ordering is subject to unannounced change and eventual consistency issues. Results are given in groups of 5,000 user IDs and multiple “pages” of results can be navigated through using the next_cursor value in subsequent requests.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="user_id" required="false" hint="The ID of the user for whom to return results for.">
+			<cfargument name="screen_name" required="false" hint="The screen name of the user for whom to return results for.">
+			<cfargument name="cursor" required="false" hint="Causes the list of connections to be broken into pages of no more than 5000 IDs at a time. The number of IDs returned is not guaranteed to be 5000 as suspended users are filtered out after connections are queried. If no cursor is provided, a value of -1 will be assumed, which is the first page.">
+			<cfargument name="stringify_ids" required="false" hint="Many programming environments will not consume our Tweet ids due to their size. Provide this option to have ids returned as strings instead.">
+			<cfargument name="count" required="false" hint="Specifies the number of IDs attempt retrieval of, up to a maximum of 5,000 per distinct request. The value of count is best thought of as a limit to the number of results to return. When using the count parameter with this method, it is wise to use a consistent count value across all requests to the same user’s collection. Usage of this parameter is encouraged in environments where all 5,000 IDs constitutes too large of a response.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/friends/ids.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getFollowersIDs" output="false" access="public" returntype="String" 
+		hint="Returns a cursored collection of user IDs for every user following the specified user. At this time, results are ordered with the most recent following first — however, this ordering is subject to unannounced change and eventual consistency issues. Results are given in groups of 5,000 user IDs and multiple “pages” of results can be navigated through using the next_cursor value in subsequent requests.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="user_id" required="false" hint="The ID of the user for whom to return results for.">
+			<cfargument name="screen_name" required="false" hint="The screen name of the user for whom to return results for.">
+			<cfargument name="cursor" required="false" hint="Causes the list of connections to be broken into pages of no more than 5000 IDs at a time. The number of IDs returned is not guaranteed to be 5000 as suspended users are filtered out after connections are queried. If no cursor is provided, a value of -1 will be assumed, which is the first page.">
+			<cfargument name="stringify_ids" required="false" hint="Many programming environments will not consume our Tweet ids due to their size. Provide this option to have ids returned as strings instead.">
+			<cfargument name="count" required="false" hint="Specifies the number of IDs attempt retrieval of, up to a maximum of 5,000 per distinct request. The value of count is best thought of as a limit to the number of results to return. When using the count parameter with this method, it is wise to use a consistent count value across all requests to the same user’s collection. Usage of this parameter is encouraged in environments where all 5,000 IDs constitutes too large of a response.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/followers/ids.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getFriendshipsNoRetweetsIDs" output="false" access="public" returntype="String" 
+		hint="Returns a collection of user_ids that the currently authenticated user does not want to receive retweets from. Use postFriendshipsUpdate() to set the “no retweets” status for a given user account on behalf of the current user.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="stringify_ids" required="false" hint="Many programming environments will not consume our ids due to their size. Provide this option to have ids returned as strings instead. Read more about [node:194]. This parameter is especially important to use in Javascript environments.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/friendships/no_retweets/ids.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getFriendshipsIncoming" output="false" access="public" returntype="String" 
+		hint="Returns a collection of numeric IDs for every user who has a pending request to follow the authenticating user.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="cursor" required="false" hint="Causes the list of connections to be broken into pages of no more than 5000 IDs at a time. The number of IDs returned is not guaranteed to be 5000 as suspended users are filtered out after connections are queried. If no cursor is provided, a value of -1 will be assumed, which is the first page.">
+			<cfargument name="stringify_ids" required="false" hint="Many programming environments will not consume our Tweet ids due to their size. Provide this option to have ids returned as strings instead.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/friendships/incoming.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getFriendshipsOutgoing" output="false" access="public" returntype="String" 
+		hint="Returns a collection of numeric IDs for every protected user for whom the authenticating user has a pending follow request.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="cursor" required="false" hint="Causes the list of connections to be broken into pages of no more than 5000 IDs at a time. The number of IDs returned is not guaranteed to be 5000 as suspended users are filtered out after connections are queried. If no cursor is provided, a value of -1 will be assumed, which is the first page.">
+			<cfargument name="stringify_ids" required="false" hint="Many programming environments will not consume our Tweet ids due to their size. Provide this option to have ids returned as strings instead.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/friendships/outgoing.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postFriendshipsCreate" output="false" access="public" returntype="String" 
+		hint="Allows the authenticating users to follow the user specified in the ID parameter. Returns the befriended user in the requested format when successful. Returns a string describing the failure condition when unsuccessful. If you are already friends with the user a HTTP 403 may be returned, though for performance reasons you may get a 200 OK message even if the friendship already exists.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="screen_name " required="false" hint="The screen name of the user for whom to befriend. Providing either screen_name or user_id is required.">
+			<cfargument name="user_id" required="false" hint="The ID of the user for whom to befriend. Providing either screen_name or user_id is required.">
+			<cfargument name="follow" required="false" hint="Enable notifications for the target user.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/friendships/create.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postFriendshipsDestroy" output="false" access="public" returntype="String" 
+		hint="Allows the authenticating user to unfollow the user specified in the ID parameter. Returns the unfollowed user in the requested format when successful. Returns a string describing the failure condition when unsuccessful.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="screen_name" required="false" hint="The screen name of the user for whom to unfollow. Providing either screen_name or user_id is required.">
+			<cfargument name="user_id" required="false" hint="The ID of the user for whom to unfollow. Providing either screen_name or user_id is required.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/friendships/destroy.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postFriendshipsUpdate" output="false" access="public" returntype="String" 
+		hint="Allows one to enable or disable retweets and device notifications from the specified user.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="screen_name" required="false" hint="The screen name of the user for whom to befriend. Providing either screen_name or user_id is required.">
+			<cfargument name="user_id" required="false" hint="The ID of the user for whom to befriend. Providing either screen_name or user_id is required.">
+			<cfargument name="device" required="false" hint="Enable/disable device notifications from the target user.">
+			<cfargument name="retweets" required="false" hint="Enable/disable retweets from the target user.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/friendships/update.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getFriendShipsShow" output="false" access="public" returntype="String" 
+		hint="Returns detailed information about the relationship between two arbitrary users. At least one source and one target, whether specified by IDs or screen_names, should be provided to this method.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="source_id" required="false" hint="The user_id of the subject user.">
+			<cfargument name="source_screen_name" required="false" hint="The screen_name of the subject user.">
+			<cfargument name="target_id" required="false" hint="The user_id of the target user.">
+			<cfargument name="target_screen_name" required="false" hint="The screen_name of the target user.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/friendships/show.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getFriendsList" output="false" access="public" returntype="String" 
+		hint="Returns a cursored collection of user objects for every user the specified user is following (otherwise known as their “friends”). Results are given in groups of 20 users and multiple “pages” of results can be navigated through using the next_cursor value in subsequent requests.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="user_id" required="false" hint="The ID of the user for whom to return results for. Either a screen_name or a user_id should be provided.">
+			<cfargument name="screen_name" required="false" hint="The screen name of the user for whom to return results for. Either a screen_name or a user_id should be provided.">
+			<cfargument name="cursor" required="false" hint="Causes the results to be broken into pages. If no cursor is provided, a value of -1 will be assumed, which is the first page.">
+			<cfargument name="count" required="false" hint="The number of users to return per page, up to a maximum of 200. Defaults to 20.">
+			<cfargument name="skip_status" required="false" hint="When set to either true, t or 1 statuses will not be included in the returned user objects.">
+			<cfargument name="include_user_entities" required="false" hint="The user object entities node will be disincluded when set to false.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/friends/list.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getFollowersList" output="false" access="public" returntype="String" 
+		hint="Returns a cursored collection of user objects for users following the specified user. Results are given in groups of 20 users and multiple “pages” of results can be navigated through using the next_cursor value in subsequent requests.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="user_id" required="false" hint="The ID of the user for whom to return results for. Either a screen_name or a user_id should be provided.">
+			<cfargument name="screen_name" required="false" hint="The screen name of the user for whom to return results for. Either a screen_name or a user_id should be provided.">
+			<cfargument name="cursor" required="false" hint="Causes the results to be broken into pages. If no cursor is provided, a value of -1 will be assumed, which is the first page.">
+			<cfargument name="count" required="false" hint="The number of users to return per page, up to a maximum of 200. Defaults to 20.">
+			<cfargument name="skip_status" required="false" hint="When set to either true, t or 1 statuses will not be included in the returned user objects.">
+			<cfargument name="include_user_entities" required="false" hint="The user object entities node will be disincluded when set to false.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/followers/list.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getFriendshipsLookup" output="false" access="public" returntype="String" 
+		hint="Returns the relationships of the authenticating user to the comma-separated list of up to 100 screen_names or user_ids provided. Values for connections can be: following, following_requested, followed_by, none, blocking, muting.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="screen_name" required="false" hint="A comma separated list of screen names, up to 100 are allowed in a single request.">
+			<cfargument name="user_id" required="false" hint="A comma separated list of user IDs, up to 100 are allowed in a single request.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/friendships/lookup.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<!--- ---------------- --->
+	<!--- BLOCKING METHODS --->
+	<!--- ---------------- --->
+
+	<cffunction name="getBlocksList" output="false" access="public" returntype="String" 
+		hint="Returns a cursored collection of user objects that the authenticating user is blocking.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="include_entities" required="false" hint="The entities node will not be included when set to false.">
+			<cfargument name="skip_status" required="false" hint="When set to either true, t or 1 statuses will not be included in the returned user objects.">
+			<cfargument name="cursor" required="false" hint="Causes the list of blocked users to be broken into pages of no more than 5000 IDs at a time. The number of IDs returned is not guaranteed to be 5000 as suspended users are filtered out after connections are queried. If no cursor is provided, a value of -1 will be assumed, which is the first page.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/blocks/list.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getBlocksIDs" output="false" access="public" returntype="String" 
+		hint="Returns an cursored array of numeric user ids the authenticating user is blocking.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="stringify_ids" required="false" hint="Many programming environments will not consume our ids due to their size. Provide this option to have ids returned as strings instead.">
+			<cfargument name="cursor" required="false" hint="Causes the list of IDs to be broken into pages of no more than 5000 IDs at a time. The number of IDs returned is not guaranteed to be 5000 as suspended users are filtered out after connections are queried. If no cursor is provided, a value of -1 will be assumed, which is the first page.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/blocks/ids.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postBlocksCreate" output="false" access="public" returntype="String" 
+		hint="Blocks the specified user from following the authenticating user. In addition the blocked user will not show in the authenticating users mentions or timeline (unless retweeted by another user). If a follow or friend relationship exists it is destroyed.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="screen_name" required="false" hint="The screen name of the potentially blocked user. Either screen_name or user_id must be provided.">
+			<cfargument name="user_id" required="false" hint="The ID of the potentially blocked user. Either screen_name or user_id must be provided.">
+			<cfargument name="include_entities" required="false" hint="The entities node will not be included when set to false.">
+			<cfargument name="skip_status" required="false" hint="When set to either true, t or 1 statuses will not be included in the returned user objects.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/blocks/create.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postBlocksDestroy" output="false" access="public" returntype="String" 
+		hint="Un-blocks the user specified in the ID parameter for the authenticating user. Returns the un-blocked user in the requested format when successful. If relationships existed before the block was instated, they will not be restored.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="screen_name" required="false" hint="The screen name of the potentially blocked user. Either screen_name or user_id must be provided.">
+			<cfargument name="user_id" required="false" hint="The ID of the potentially blocked user. Either screen_name or user_id must be provided.">
+			<cfargument name="include_entities" required="false" hint="The entities node will not be included when set to false.">
+			<cfargument name="skip_status" required="false" hint="When set to either true, t or 1 statuses will not be included in the returned user objects.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/blocks/destroy.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<!--- ------------ --->
+	<!--- USER METHODS --->
+	<!--- ------------ --->
+
+	<cffunction name="getUsersLookup" output="false" access="public" returntype="String" 
+		hint="Returns fully-hydrated user objects for up to 100 users per request, as specified by comma-separated values passed to the user_id and/or screen_name parameters. This method is especially useful when used in conjunction with collections of user IDs returned from GET friends / ids and GET followers / ids.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="screen_name" required="false" hint="A comma separated list of screen names, up to 100 are allowed in a single request. You are strongly encouraged to use a POST for larger (up to 100 screen names) requests.">
+			<cfargument name="user_id" required="false" hint="A comma separated list of user IDs, up to 100 are allowed in a single request. You are strongly encouraged to use a POST for larger requests.">
+			<cfargument name="include_entities" required="false" hint="The entities node that may appear within embedded statuses will be disincluded when set to false.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/users/lookup.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getUsersShow" output="false" access="public" returntype="String" 
+		hint="Returns a variety of information about the user specified by the required user_id or screen_name parameter. The author’s most recent Tweet will be returned inline when possible. getUsersLookup() is used to retrieve a bulk collection of user objects.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="user_id" required="false" hint="The ID of the user for whom to return results for. Either an id or screen_name is required for this method.">
+			<cfargument name="screen_name" required="false" hint="The screen name of the user for whom to return results for. Either a id or screen_name is required for this method.">
+			<cfargument name="include_entities" required="false" hint="The entities node will be disincluded when set to false.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/users/show.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getUsersSearch" output="false" access="public" returntype="String" 
+		hint="Provides a simple, relevance-based search interface to public user accounts on Twitter. Try querying by topical interest, full name, company name, location, or other criteria. Exact match searches are not supported. Only the first 1,000 matching results are available.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="q" required="true" hint="The search query to run against people search.">
+			<cfargument name="page" required="false" hint="Specifies the page of results to retrieve.">
+			<cfargument name="count" required="false" hint="The number of potential user results to retrieve per page. This value has a maximum of 20.">
+			<cfargument name="include_entities" required="false" hint="The entities node will be disincluded from embedded tweet objects when set to false.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/users/search.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getUsersContributees" output="false" access="public" returntype="String" 
+		hint="Returns a collection of users that the specified user can 'contribute' to.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="user_id" required="false" hint="The ID of the user for whom to return results for. A user_id or screen_name is required.">
+			<cfargument name="screen_name" required="false" hint="The screen name of the user for whom to return results for. A user_id or screen_name is required.">
+			<cfargument name="include_entities" required="false" hint="The entities node will be disincluded when set to false.">
+			<cfargument name="skip_status" required="false" hint="When set to either true, t or 1 statuses will not be included in the returned user objects.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/users/contributees.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getUsersContributors" output="false" access="public" returntype="String" 
+		hint="Returns a collection of users who can contribute to the specified account.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="user_id" required="false" hint="The ID of the user for whom to return results for. A user_id or screen_name is required.">
+			<cfargument name="screen_name" required="false" hint="The screen name of the user for whom to return results for. A user_id or screen_name is required.">
+			<cfargument name="include_entities" required="false" hint="The entities node will be disincluded when set to false.">
+			<cfargument name="skip_status" required="false" hint="When set to either true, t or 1 statuses will not be included in the returned user objects.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/users/contributors.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getUsersProfileBanner" output="false" access="public" returntype="String" 
+		hint="Returns a map of the available size variations of the specified user’s profile banner. If the user has not uploaded a profile banner, a HTTP 404 will be served instead. This method can be used instead of string manipulation on the profile_banner_url returned in user objects.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="user_id" required="false" hint="The ID of the user for whom to return results for. A user_id or screen_name is required.">
+			<cfargument name="screen_name" required="false" hint="The screen name of the user for whom to return results for. A user_id or screen_name is required.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/users/profile_banner.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getUsersSuggestions" output="false" access="public" returntype="String" 
+		hint="Access to Twitter’s suggested user list. This returns the list of suggested user categories usable with getUsersSuggestionsSlug().">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="lang" required="false" hint="Restricts the suggested categories to the requested language. Currently supported languages are provided by the getHelpLanguages() API request. Unsupported language codes will receive English (en) results.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/users/suggestions.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getUsersSuggestionsSlug" output="false" access="public" returntype="String" 
+		hint="Access the users in a given category of the Twitter suggested user list. It is recommended that applications cache this data for no more than one hour.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="slug" required="false" hint="The short name of list or a category">
+			<cfargument name="lang" required="false" hint="Restricts the suggested categories to the requested language. Currently supported languages are provided by the getHelpLanguages() API request. Unsupported language codes will receive English (en) results.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/users/suggestions/" & arguments.slug & ".json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getUsersSuggestionsSlugMembers" output="false" access="public" returntype="String" 
+		hint="Access the users in a given category of the Twitter suggested user list and return their most recent status if they are not a protected user.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="slug" required="false" hint="The short name of list or a category">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/users/suggestions/" & arguments.slug & "/members.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postUsersReportSpam" output="false" access="public" returntype="String" 
+		hint="Report the specified user as a spam account to Twitter. Additionally performs a block on behalf of the authenticated user.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="user_id" required="false" hint="The ID or screen_name of the user you want to report as a spammer. A user_id or screen_name is required.">
+			<cfargument name="screen_name" required="false" hint="The ID of the user you want to report as a spammer. A user_id or screen_name is required.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/users/report_spam.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<!--- ------------ --->
+	<!--- MUTE METHODS --->
+	<!--- ------------ --->
+
+	<cffunction name="getMutesUsersList" output="false" access="public" returntype="String" 
+		hint="Returns an array of user objects the authenticating user has muted. ">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="cursor" required="false" hint="Causes the list of IDs to be broken into pages of no more than 5000 IDs at a time. The number of IDs returned is not guaranteed to be 5000 as suspended users are filtered out after connections are queried. If no cursor is provided, a value of -1 will be assumed, which is the first page.">
+			<cfargument name="include_entities" required="false" hint="The entities node will not be included when set to false.">
+			<cfargument name="skip_status" required="false" hint="When set to either true, t or 1 statuses will not be included in the returned user objects.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/mutes/users/list.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getMutesUsersIDs" output="false" access="public" returntype="String" 
+		hint="Returns an array of numeric user ids the authenticating user has muted.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="cursor" required="false" hint="Causes the list of IDs to be broken into pages of no more than 5000 IDs at a time. The number of IDs returned is not guaranteed to be 5000 as suspended users are filtered out after connections are queried. If no cursor is provided, a value of -1 will be assumed, which is the first page.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/mutes/users/ids.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postMutesUsersCreate" output="false" access="public" returntype="String" 
+		hint="Mutes the user specified in the ID parameter for the authenticating user. Returns the muted user in the requested format when successful. Returns a string describing the failure condition when unsuccessful.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="user_id" required="false" hint="The ID of the potentially muted user. A user_id or screen_name is required.">
+			<cfargument name="screen_name" required="false" hint="The screen name of the potentially muted user. A user_id or screen_name is required.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/mutes/users/create.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postMutesUsersDestroy" output="false" access="public" returntype="String" 
+		hint="Un-mutes the user specified in the ID parameter for the authenticating user. Returns the unmuted user in the requested format when successful. Returns a string describing the failure condition when unsuccessful.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="user_id" required="false" hint="The ID of the potentially muted user. A user_id or screen_name is required.">
+			<cfargument name="screen_name" required="false" hint="The screen name of the potentially muted user. A user_id or screen_name is required.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/mutes/users/destroy.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<!--- ------------------ --->
+	<!--- FAVORITING METHODS --->
+	<!--- ------------------ --->
+
+	<cffunction name="getFavoritesList" output="false" access="public" returntype="String" 
+		hint="Returns the 20 most recent Tweets favorited by the authenticating or specified user. If you do not provide either a user_id or screen_name to this method, it will assume you are requesting on behalf of the authenticating user. Specify one or the other for best results.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="user_id" required="false" hint="The ID of the user for whom to return results for.">
+			<cfargument name="screen_name" required="false" hint="The screen name of the user for whom to return results for.">
+			<cfargument name="count" required="false" hint="Specifies the number of records to retrieve. Must be less than or equal to 200. Defaults to 20.">
+			<cfargument name="since_id" required="false" hint="Returns results with an ID greater than (that is, more recent than) the specified ID. There are limits to the number of Tweets which can be accessed through the API. If the limit of Tweets has occured since the since_id, the since_id will be forced to the oldest ID available.">
+			<cfargument name="max_id" required="false" hint="Returns results with an ID less than (that is, older than) or equal to the specified ID.">
+			<cfargument name="include_entities" required="false" hint="The entities node will be omitted when set to false.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/favorites/list.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postFavoritesCreate" output="false" access="public" returntype="String" 
+		hint="Favorites the status specified in the ID parameter as the authenticating user. Returns the favorite status when successful.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="id" required="true" hint="The numerical ID of the desired status.">
+			<cfargument name="include_entities" required="false" hint="The entities node will be omitted when set to false.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/favorites/create.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postFavoritesDestroy" output="false" access="public" returntype="String" 
+		hint="Un-favorites the status specified in the ID parameter as the authenticating user. Returns the un-favorited status in the requested format when successful.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="id" required="true" hint="The numerical ID of the desired status.">
+			<cfargument name="include_entities" required="false" hint="The entities node will be omitted when set to false.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/favorites/destroy.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<!--- ------------ --->
+	<!--- LIST METHODS --->
+	<!--- ------------ --->
+
+	
+
 	<!--- blank --->
 	<!---
 	<cffunction name="get" output="false" access="public" returntype="String" 
