@@ -1197,7 +1197,105 @@
 	<!--- LIST METHODS --->
 	<!--- ------------ --->
 
-	
+	<cffunction name="getListsList" output="false" access="public" returntype="String" 
+		hint="Returns all lists the authenticating or specified user subscribes to, including their own. The user is specified using the user_id or screen_name parameters. If no user is given, the authenticating user is used.
+
+		A maximum of 100 results will be returned by this call. Subscribed lists are returned first, followed by owned lists. This means that if a user subscribes to 90 lists and owns 20 lists, this method returns 90 subscriptions
+		and 10 owned lists. The reverse method returns owned lists first, so with reverse=true, 20 owned lists and 80 subscriptions would be returned. If your goal is to obtain every list a user owns or subscribes to, use
+		getListsOwnerships() and/or getListsSubscriptions() instead.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="user_id" required="false" hint="The ID of the user for whom to return results for.">
+			<cfargument name="screen_name " required="false" hint="The screen name of the user for whom to return results for.">
+			<cfargument name="reverse" required="false" hint="Set this to true if you would like owned lists to be returned first.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/lists/list.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getListsStatuses" output="false" access="public" returntype="String" 
+		hint="Returns a timeline of tweets authored by members of the specified list. Retweets are included by default. Use the include_rts=false parameter to omit retweets.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="list_id" required="true" hint="The numerical id of the list.">
+			<cfargument name="slug" required="false" hint="You can identify a list by its slug instead of its numerical id. If you decide to do so, note that you’ll also have to specify the list owner using the owner_id or owner_screen_name parameters.">
+			<cfargument name="owner_screen_name" required="false" hint="The screen name of the user who owns the list being requested by a slug.">
+			<cfargument name="owner_id" required="false" hint="The user ID of the user who owns the list being requested by a slug.">
+			<cfargument name="since_id" required="false" hint="Returns results with an ID greater than (that is, more recent than) the specified ID. There are limits to the number of Tweets which can be accessed through the API. If the limit of Tweets has occured since the since_id, the since_id will be forced to the oldest ID available.">
+			<cfargument name="max_id" required="false" hint="Returns results with an ID less than (that is, older than) or equal to the specified ID.">
+			<cfargument name="count" required="false" hint="Specifies the number of results to retrieve per page.">
+			<cfargument name="include_entities" required="false" hint="Entities are ON by default in API 1.1, each tweet includes a node called “entities”. This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags. You can omit entities from the result by using include_entities=false">
+			<cfargument name="include_rts" required="false" hint="When set to either true, t or 1, the list timeline will contain native retweets (if they exist) in addition to the standard stream of tweets. The output format of retweeted tweets is identical to the representation you see in home_timeline.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/lists/statuses.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postListsMembersDestroy" output="false" access="public" returntype="String" 
+		hint="Removes the specified member from the list. The authenticated user must be the list’s owner to remove members from the list.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="list_id" required="false" hint="The numerical id of the list.">
+			<cfargument name="slug" required="false" hint="You can identify a list by its slug instead of its numerical id. If you decide to do so, note that you’ll also have to specify the list owner using the owner_id or owner_screen_name parameters.">
+			<cfargument name="user_id" required="false" hint="The ID of the user to remove from the list. Helpful for disambiguating when a valid user ID is also a valid screen name.">
+			<cfargument name="screen_name" required="false" hint="The screen name of the user for whom to remove from the list. Helpful for disambiguating when a valid screen name is also a user ID.">
+			<cfargument name="owner_screen_name" required="false" hint="The screen name of the user who owns the list being requested by a slug.">
+			<cfargument name="owner_id" required="false" hint="The user ID of the user who owns the list being requested by a slug.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/lists/members/destroy.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getListsMemberships" output="false" access="public" returntype="String" 
+		hint="Returns the lists the specified user has been added to. If user_id or screen_name are not provided the memberships for the authenticating user are returned.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="user_id" required="false" hint="The ID of the user for whom to return results for. A user_id or screen_name must be provided.">
+			<cfargument name="screen_name" required="false" hint="The screen name of the user for whom to return results for. A user_id or screen_name must be provided.">
+			<cfargument name="count" required="false" hint="The amount of results to return per page. Defaults to 20. No more than 1000 results will ever be returned in a single page.">
+			<cfargument name="cursor" required="false" hint="Breaks the results into pages. Provide a value of -1 to begin paging. Provide values as returned in the response body’s next_cursor and previous_cursor attributes to page back and forth in the list. It is recommended to always use cursors when the method supports them.">
+			<cfargument name="filter_to_owned_lists" required="false" hint="When set to true, t or 1, will return just lists the authenticating user owns, and the user represented by user_id or screen_name is a member of.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/lists/memberships.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getListsSubscribers" output="false" access="public" returntype="String" 
+		hint="Returns the subscribers of the specified list. Private list subscribers will only be shown if the authenticated user owns the specified list.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="list_id" required="false" hint="The numerical id of the list.">
+			<cfargument name="slug" required="false" hint="You can identify a list by its slug instead of its numerical id. If you decide to do so, note that you’ll also have to specify the list owner using the owner_id or owner_screen_name parameters.">
+			<cfargument name="owner_screen_name" required="false" hint="The screen name of the user who owns the list being requested by a slug.">
+			<cfargument name="owner_id" required="false" hint="The user ID of the user who owns the list being requested by a slug.">
+			<cfargument name="count" required="false" hint="Specifies the number of results to return per page (see cursor below). The default is 20, with a maximum of 5,000.">
+			<cfargument name="cursor" required="false" hint="Breaks the results into pages. A single page contains 20 lists. Provide a value of -1 to begin paging. Provide values as returned in the response body’s next_cursor and previous_cursor attributes to page back and forth in the list.">
+			<cfargument name="include_entities" required="false" hint="When set to either true, t or 1, each tweet will include a node called “entities”. This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags.">
+			<cfargument name="skip_status" required="false" hint="When set to either true, t or 1 statuses will not be included in the returned user objects.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/lists/subscribers.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
 
 	<!--- blank --->
 	<!---
