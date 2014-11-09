@@ -484,7 +484,6 @@
 	<cffunction name="getStatusesOembed" output="false" access="public" returntype="String" 
 		hint="Returns a single Tweet, specified by either a Tweet web URL or the Tweet ID, in an oEmbed-compatible format. The returned HTML snippet will be automatically recognized as an Embedded Tweet when Twitter’s widget JavaScript is included on the page. (https://dev.twitter.com/rest/reference/get/statuses/oembed)">
 			<cfargument name="accessToken" required="true">
-			<cfargument name="response_format" required="true" default="json" hint="Twitter lets you choose if you want a JSON or XML response. Defaults to JSON, but can also be XML">
 			<cfargument name="id" required="false" hint="The ID of the desired Tweet. Either the id or url parameters must be specified in a request. It is not necessary to include both.">
 			<cfargument name="url" required="false" hint="The URL-encoded URL of the Tweet to be embedded. Example: https%3A%2F%2Ftwitter.com%Interior%2Fstatus%2F507185938620219395">
 			<cfargument name="maxwidth" required="false" hint="The maximum width of a rendered Tweet in whole pixels. This value must be between 220 and 550 inclusive.">
@@ -498,7 +497,7 @@
 			<cfset local.method = "get">
 			<cfset local.accessToken = arguments.accessToken>
 			<cfset structDelete(arguments, "accessToken")>
-			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/statuses/oembed." & arguments.response_format,method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/statuses/oembed.json",method=local.method)>
 			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
 			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
 			<cfreturn local.request.send() />
