@@ -1297,6 +1297,521 @@
 			<cfreturn local.request.send() />
 	</cffunction>
 
+	<cffunction name="postListsSubscribersCreate" output="false" access="public" returntype="String" 
+		hint="Subscribes the authenticated user to the specified list. Either a list_id or a slug is required. If providing a list_slug, an owner_screen_name or owner_id is also required.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="owner_screen_name" required="false" hint="The screen name of the user who owns the list being requested by a slug.">
+			<cfargument name="owner_id" required="false" hint="The user ID of the user who owns the list being requested by a slug.">
+			<cfargument name="list_id" required="false" hint="The numerical id of the list.">
+			<cfargument name="slug" required="false" hint="You can identify a list by its slug instead of its numerical id. If you decide to do so, note that you’ll also have to specify the list owner using the owner_id or owner_screen_name parameters.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/lists/subscribers/create.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getListsSubscribersShow" output="false" access="public" returntype="String" 
+		hint="Check if the specified user is a subscriber of the specified list. Returns the user if they are subscriber. Either a list_id or a slug is required. If providing a list_slug, an owner_screen_name or owner_id is also required.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="owner_screen_name" required="false" hint="The screen name of the user who owns the list being requested by a slug.">
+			<cfargument name="owner_id" required="false" hint="The user ID of the user who owns the list being requested by a slug.">
+			<cfargument name="list_id" required="false" hint="The numerical id of the list.">
+			<cfargument name="slug" required="false" hint="You can identify a list by its slug instead of its numerical id. If you decide to do so, note that you’ll also have to specify the list owner using the owner_id or owner_screen_name parameters.">
+			<cfargument name="user_id" required="false" hint="The ID of the user for whom to return results for. Helpful for disambiguating when a valid user ID is also a valid screen name.">
+			<cfargument name="screen_name" required="false" hint="The screen name of the user for whom to return results for. Helpful for disambiguating when a valid screen name is also a user ID.">
+			<cfargument name="include_entities" required="false" hint="When set to either true, t or 1, each tweet will include a node called “entities”. This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags.">
+			<cfargument name="skip_status" required="false" hint="When set to either true, t or 1 statuses will not be included in the returned user objects.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/lists/subscribers/show.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postListsSubscribersDestroy" output="false" access="public" returntype="String" 
+		hint="Unsubscribes the authenticated user from the specified list. Either a list_id or a slug is required. If providing a list_slug, an owner_screen_name or owner_id is also required.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="list_id" required="false" hint="The numerical id of the list.">
+			<cfargument name="slug" required="false" hint="You can identify a list by its slug instead of its numerical id. If you decide to do so, note that you’ll also have to specify the list owner using the owner_id or owner_screen_name parameters.">
+			<cfargument name="owner_screen_name " required="false" hint="The screen name of the user who owns the list being requested by a slug.">
+			<cfargument name="owner_id" required="false" hint="The user ID of the user who owns the list being requested by a slug.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/lists/subscribers/destroy.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postListsMembersCreateAll" output="false" access="public" returntype="String" 
+		hint="Adds multiple members to a list, by specifying a comma-separated list of member ids or screen names. The authenticated user must own the list to be able to add members to it. Note that lists can’t have more than 5,000 members, and you are limited to adding up to 100 members to a list at a time with this method. Either a list_id or a slug is required. If providing a list_slug, an owner_screen_name or owner_id is also required.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="list_id" required="false" hint="The numerical id of the list.">
+			<cfargument name="slug" required="false" hint="You can identify a list by its slug instead of its numerical id. If you decide to do so, note that you’ll also have to specify the list owner using the owner_id or owner_screen_name parameters.">
+			<cfargument name="user_id" required="false" hint="A comma separated list of user IDs, up to 100 are allowed in a single request.">
+			<cfargument name="screen_name" required="false" hint="A comma separated list of screen names, up to 100 are allowed in a single request.">
+			<cfargument name="owner_screen_name" required="false" hint="The screen name of the user who owns the list being requested by a slug.">
+			<cfargument name="owner_id" required="false" hint="The user ID of the user who owns the list being requested by a slug.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/lists/members/create_all.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getListsMembersShow" output="false" access="public" returntype="String" 
+		hint="Check if the specified user is a member of the specified list.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="list_id" required="false" hint="The numerical id of the list.">
+			<cfargument name="slug" required="false" hint="You can identify a list by its slug instead of its numerical id. If you decide to do so, note that you’ll also have to specify the list owner using the owner_id or owner_screen_name parameters.">
+			<cfargument name="user_id" required="false" hint="The ID of the user for whom to return results for. Helpful for disambiguating when a valid user ID is also a valid screen name.">
+			<cfargument name="screen_name" required="false" hint="The screen name of the user for whom to return results for. Helpful for disambiguating when a valid screen name is also a user ID.">
+			<cfargument name="owner_screen_name" required="false" hint="The screen name of the user who owns the list being requested by a slug.">
+			<cfargument name="owner_id" required="false" hint="The user ID of the user who owns the list being requested by a slug.">
+			<cfargument name="include_entities" required="false" hint="When set to either true, t or 1, each tweet will include a node called “entities”. This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags.">
+			<cfargument name="skip_status" required="false" hint="When set to either true, t or 1 statuses will not be included in the returned user objects.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/lists/members/show.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getListsMembers" output="false" access="public" returntype="String" 
+		hint="Returns the members of the specified list. Private list members will only be shown if the authenticated user owns the specified list. Either a list_id or a slug is required. If providing a list_slug, an owner_screen_name or owner_id is also required.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="list_id" required="false" hint="The numerical id of the list.">
+			<cfargument name="slug" required="false" hint="You can identify a list by its slug instead of its numerical id. If you decide to do so, note that you’ll also have to specify the list owner using the owner_id or owner_screen_name parameters.">
+			<cfargument name="owner_screen_name" required="false" hint="The screen name of the user who owns the list being requested by a slug.">
+			<cfargument name="owner_id" required="false" hint="The user ID of the user who owns the list being requested by a slug.">
+			<cfargument name="count" required="false" hint="Specifies the number of results to return per page (see cursor below). The default is 20, with a maximum of 5,000.">
+			<cfargument name="cursor" required="false" hint="Causes the collection of list members to be broken into pages of consistent sizes (specified by the count parameter). If no cursor is provided, a value of -1 will be assumed, which is the first page.">
+			<cfargument name="include_entities" required="false" hint="The entities node will be disincluded when set to false.">
+			<cfargument name="skip_status" required="false" hint="When set to either true, t or 1 statuses will not be included in the returned user objects.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/lists/members.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postListsMembersCreate" output="false" access="public" returntype="String" 
+		hint="Add a member to a list. The authenticated user must own the list to be able to add members to it. Note that lists cannot have more than 5,000 members. Either a list_id or a slug is required. If providing a list_slug, an owner_screen_name or owner_id is also required.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="list_id" required="false" hint="The numerical id of the list.">
+			<cfargument name="slug" required="false" hint="You can identify a list by its slug instead of its numerical id. If you decide to do so, note that you’ll also have to specify the list owner using the owner_id or owner_screen_name parameters.">
+			<cfargument name="user_id" required="false" hint="The ID of the user for whom to return results for. Helpful for disambiguating when a valid user ID is also a valid screen name.">
+			<cfargument name="screen_name" required="false" hint="The screen name of the user for whom to return results for. Helpful for disambiguating when a valid screen name is also a user ID.">
+			<cfargument name="owner_screen_name" required="false" hint="The screen name of the user who owns the list being requested by a slug.">
+			<cfargument name="owner_id" required="false" hint="The user ID of the user who owns the list being requested by a slug.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/lists/members/create.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postListsDestroy" output="false" access="public" returntype="String" 
+		hint="Deletes the specified list. The authenticated user must own the list to be able to destroy it. Either a list_id or a slug is required. If providing a list_slug, an owner_screen_name or owner_id is also required.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="owner_screen_name" required="false" hint="The screen name of the user who owns the list being requested by a slug.">
+			<cfargument name="owner_id" required="false" hint="The user ID of the user who owns the list being requested by a slug.">
+			<cfargument name="list_id" required="false" hint="The numerical id of the list.">
+			<cfargument name="slug" required="false" hint="You can identify a list by its slug instead of its numerical id. If you decide to do so, note that you’ll also have to specify the list owner using the owner_id or owner_screen_name parameters.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/lists/destroy.json ",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postListsUpdate" output="false" access="public" returntype="String" 
+		hint="Updates the specified list. The authenticated user must own the list to be able to update it. Either a list_id or a slug is required. If providing a list_slug, an owner_screen_name or owner_id is also required.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="list_id" required="false" hint="The numerical id of the list.">
+			<cfargument name="slug" required="false" hint="You can identify a list by its slug instead of its numerical id. If you decide to do so, note that you’ll also have to specify the list owner using the owner_id or owner_screen_name parameters.">
+			<cfargument name="name" required="false" hint="The name for the list. A list’s name must start with a letter and can consist only of 25 or fewer letters, numbers, “-“, or “_” characters.">
+			<cfargument name="mode" required="false" hint="Whether your list is public or private. Values can be public or private. If no mode is specified the list will be public.">
+			<cfargument name="description" required="false" hint="The description to give the list.">
+			<cfargument name="owner_screen_name" required="false" hint="The screen name of the user who owns the list being requested by a slug.">
+			<cfargument name="owner_id" required="false" hint="The user ID of the user who owns the list being requested by a slug.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/lists/update.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postListsCreate" output="false" access="public" returntype="String" 
+		hint="Creates a new list for the authenticated user. Note that you can’t create more than 20 lists per account.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="name" required="false" hint="The name for the list. A list’s name must start with a letter and can consist only of 25 or fewer letters, numbers, “-“, or “_” characters.">
+			<cfargument name="mode" required="false" hint="Whether your list is public or private. Values can be public or private. If no mode is specified the list will be public.">
+			<cfargument name="description" required="false" hint="The description to give the list.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/lists/create.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getListsShow" output="false" access="public" returntype="String" 
+		hint="Returns the specified list. Private lists will only be shown if the authenticated user owns the specified list. Either a list_id or a slug is required. If providing a list_slug, an owner_screen_name or owner_id is also required.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="list_id" required="false" hint="The numerical id of the list.">
+			<cfargument name="slug" required="false" hint="You can identify a list by its slug instead of its numerical id. If you decide to do so, note that you’ll also have to specify the list owner using the owner_id or owner_screen_name parameters.">
+			<cfargument name="owner_screen_name" required="false" hint="The screen name of the user who owns the list being requested by a slug.">
+			<cfargument name="owner_id" required="false" hint="The user ID of the user who owns the list being requested by a slug.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/lists/show.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getListsSubscriptions" output="false" access="public" returntype="String" 
+		hint="Obtain a collection of the lists the specified user is subscribed to, 20 lists per page by default. Does not include the user’s own lists. A user_id or screen_name must be provided.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="user_id" required="false" hint="The ID of the user for whom to return results for. Helpful for disambiguating when a valid user ID is also a valid screen name.">
+			<cfargument name="screen_name" required="false" hint="The screen name of the user for whom to return results for. Helpful for disambiguating when a valid screen name is also a user ID.">
+			<cfargument name="count" required="false" hint="The amount of results to return per page. Defaults to 20. No more than 1000 results will ever be returned in a single page.">
+			<cfargument name="cursor" required="false" hint="Breaks the results into pages. Provide a value of -1 to begin paging. Provide values as returned in the response body’s next_cursor and previous_cursor attributes to page back and forth in the list. It is recommended to always use cursors when the method supports them.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/lists/subscriptions.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postListsMembersDestroyAll" output="false" access="public" returntype="String" 
+		hint="Removes multiple members from a list, by specifying a comma-separated list of member ids or screen names. The authenticated user must own the list to be able to remove members from it. Note that lists can’t have more than 500 members, and you are limited to removing up to 100 members to a list at a time with this method. Either a list_id or a slug is required. If providing a list_slug, an owner_screen_name or owner_id is also required.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="list_id" required="false" hint="The numerical id of the list.">
+			<cfargument name="slug" required="false" hint="You can identify a list by its slug instead of its numerical id. If you decide to do so, note that you’ll also have to specify the list owner using the owner_id or owner_screen_name parameters.">
+			<cfargument name="user_id" required="false" hint="A comma separated list of user IDs, up to 100 are allowed in a single request.">
+			<cfargument name="screen_name" required="false" hint="A comma separated list of screen names, up to 100 are allowed in a single request.">
+			<cfargument name="owner_screen_name" required="false" hint="The screen name of the user who owns the list being requested by a slug.">
+			<cfargument name="owner_id" required="false" hint="The user ID of the user who owns the list being requested by a slug.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/lists/members/destroy_all.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getListsOwnerships" output="false" access="public" returntype="String" 
+		hint="Returns the lists owned by the specified Twitter user. Private lists will only be shown if the authenticated user is also the owner of the lists. A user_id or screen_name must be provided.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="user_id" required="false" hint="The ID of the user for whom to return results for.">
+			<cfargument name="screen_name" required="false" hint="The screen name of the user for whom to return results for.">
+			<cfargument name="count" required="false" hint="The amount of results to return per page. Defaults to 20. No more than 1000 results will ever be returned in a single page.">
+			<cfargument name="cursor" required="false" hint="Breaks the results into pages. Provide a value of -1 to begin paging. Provide values as returned in the response body’s next_cursor and previous_cursor attributes to page back and forth in the list. It is recommended to always use cursors when the method supports them. See [node:10362] for more information.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/lists/ownerships.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<!--- -------------------- --->
+	<!--- SAVED SEARCH METHODS --->
+	<!--- -------------------- --->
+
+	<cffunction name="getSavedSearchesList" output="false" access="public" returntype="String" 
+		hint="Returns the authenticated user’s saved search queries.">
+			<cfargument name="accessToken" required="true">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/saved_searches/list.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getSavedSearchesShowID" output="false" access="public" returntype="String" 
+		hint="Retrieve the information for the saved search represented by the given id. The authenticating user must be the owner of saved search ID being requested.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="id" required="false" hint="The ID of the saved search.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/saved_searches/show/" & arguments.id & ".json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postSavedSearchesCreate" output="false" access="public" returntype="String" 
+		hint="Create a new saved search for the authenticated user. A user may only have 25 saved searches.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="query" required="false" hint="The query of the search the user would like to save.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/saved_searches/create.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="postSavedSearchesDestroyID" output="false" access="public" returntype="String" 
+		hint="Destroys a saved search for the authenticating user. The authenticating user must be the owner of saved search id being destroyed.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="id" required="false" hint="The ID of the saved search.">
+			<cfset var local = {}>
+			<cfset local.method = "post">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/saved_searches/destroy/" & arbuments.id & ".json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<!--- ----------- --->
+	<!--- GEO METHODS --->
+	<!--- ----------- --->
+
+	<cffunction name="getGeoID" output="false" access="public" returntype="String" 
+		hint="Returns all the information about a known place. (https://dev.twitter.com/overview/api/places)">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="place_id" required="false" hint="A place in the world. These IDs can be retrieved from geo/reverse_geocode.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/geo/id/" & attributes.place_id & ".json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getGeoReverseGeocode" output="false" access="public" returntype="String" 
+		hint="Given a latitude and a longitude, searches for up to 20 places that can be used as a place_id when updating a status. This request is an informative call and will deliver generalized results about geography.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="lat" required="false" hint="The latitude to search around. This parameter will be ignored unless it is inside the range -90.0 to +90.0 (North is positive) inclusive. It will also be ignored if there isn’t a corresponding long parameter.">
+			<cfargument name="long" required="false" hint="The longitude to search around. The valid ranges for longitude is -180.0 to +180.0 (East is positive) inclusive. This parameter will be ignored if outside that range, if it is not a number, if geo_enabled is disabled, or if there not a corresponding lat parameter.">
+			<cfargument name="accuracy" required="false" hint="A hint on the “region” in which to search. If a number, then this is a radius in meters, but it can also take a string that is suffixed with ft to specify feet. If this is not passed in, then it is assumed to be 0m. If coming from a device, in practice, this value is whatever accuracy the device has measuring its location (whether it be coming from a GPS, WiFi triangulation, etc.).">
+			<cfargument name="granularity" required="false" hint="This is the minimal granularity of place types to return and must be one of: poi, neighborhood, city, admin or country. If no granularity is provided for the request neighborhood is assumed. Setting this to city, for example, will find places which have a type of city, admin or country.">
+			<cfargument name="max_results" required="false" hint="A hint as to the number of results to return. This does not guarantee that the number of results returned will equal max_results, but instead informs how many “nearby” results to return. Ideally, only pass in the number of places you intend to display to the user here.">
+			<cfargument name="callback" required="false" hint="If supplied, the response will use the JSONP format with a callback of the given name.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/geo/reverse_geocode.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getGeoSearch" output="false" access="public" returntype="String" 
+		hint="Search for places that can be attached to a statuses/update. Given a latitude and a longitude pair, an IP address, or a name, this request will return a list of all the valid places that can be used as the place_id when updating a status. Conceptually, a query can be made from the user’s location, retrieve a list of places, have the user validate the location he or she is at, and then send the ID of this location with a call to POST statuses/update. This is the recommended method to use find places that can be attached to statuses/update.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="lat" required="false" hint="The latitude to search around. This parameter will be ignored unless it is inside the range -90.0 to +90.0 (North is positive) inclusive. It will also be ignored if there isn’t a corresponding long parameter.">
+			<cfargument name="long" required="false" hint="The longitude to search around. The valid ranges for longitude is -180.0 to +180.0 (East is positive) inclusive. This parameter will be ignored if outside that range, if it is not a number, if geo_enabled is disabled, or if there not a corresponding lat parameter.">
+			<cfargument name="query" required="false" hint="Free-form text to match against while executing a geo-based query, best suited for finding nearby locations by name. Remember to URL encode the query.">
+			<cfargument name="ip" required="false" hint="An IP address. Used when attempting to fix geolocation based off of the user’s IP address.">
+			<cfargument name="granularity" required="false" hint="This is the minimal granularity of place types to return and must be one of: poi, neighborhood, city, admin or country. If no granularity is provided for the request neighborhood is assumed. Setting this to city, for example, will find places which have a type of city, admin or country.">
+			<cfargument name="accuracy" required="false" hint="A hint on the “region” in which to search. If a number, then this is a radius in meters, but it can also take a string that is suffixed with ft to specify feet. If this is not passed in, then it is assumed to be 0m. If coming from a device, in practice, this value is whatever accuracy the device has measuring its location (whether it be coming from a GPS, WiFi triangulation, etc.).">
+			<cfargument name="max_results" required="false" hint="A hint as to the number of results to return. This does not guarantee that the number of results returned will equal max_results, but instead informs how many “nearby” results to return. Ideally, only pass in the number of places you intend to display to the user here.">
+			<cfargument name="contained_within" required="false" hint="This is the place_id which you would like to restrict the search results to. Setting this value means only places within the given place_id will be found. Specify a place_id. For example, to scope all results to places within “San Francisco, CA USA”, you would specify a place_id of '5a110d312052166f'">
+			<cfargument name="attribute:street_address" required="false" hint="This parameter searches for places which have this given street address. There are other well-known, and application specific attributes available. Custom attributes are also permitted.">
+			<cfargument name="callback" required="false" hint="If supplied, the response will use the JSONP format with a callback of the given name.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/geo/search.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getGeoSimilarPlaces" output="false" access="public" returntype="String" 
+		hint="Locates places near the given coordinates which are similar in name.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="lat" required="false" hint="The latitude to search around. This parameter will be ignored unless it is inside the range -90.0 to +90.0 (North is positive) inclusive. It will also be ignored if there isn’t a corresponding long parameter.">
+			<cfargument name="long" required="false" hint="The longitude to search around. The valid ranges for longitude is -180.0 to +180.0 (East is positive) inclusive. This parameter will be ignored if outside that range, if it is not a number, if geo_enabled is disabled, or if there not a corresponding lat parameter.">
+			<cfargument name="name" required="false" hint="The name a place is known as.">
+			<cfargument name="contained_within" required="false" hint="This is the place_id which you would like to restrict the search results to. Setting this value means only places within the given place_id will be found. Specify a place_id. For example, to scope all results to places within “San Francisco, CA USA”, you would specify a place_id of '5a110d312052166f'">
+			<cfargument name="attribute:street_address" required="false" hint="This parameter searches for places which have this given street address. There are other well-known, and application specific attributes available. Custom attributes are also permitted.">
+			<cfargument name="callback" required="false" hint="If supplied, the response will use the JSONP format with a callback of the given name.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/geo/similar_places.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<!--- postGepPlace() depreciated (https://dev.twitter.com/rest/reference/post/geo/place) --->
+
+	<!--- ------------- --->
+	<!--- TREND METHODS --->
+	<!--- ------------- --->
+
+	<cffunction name="getTrendsPlace" output="false" access="public" returntype="String" 
+		hint="Returns the top 10 trending topics for a specific WOEID, if trending information is available for it. The response is an array of “trend” objects that encode the name of the trending topic, the query parameter that can be used to search for the topic on Twitter Search, and the Twitter Search URL. This information is cached for 5 minutes. Requesting more frequently than that will not return any more data, and will count against your rate limit usage.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="id" required="false" hint="The Yahoo! Where On Earth ID (http://developer.yahoo.com/geo/geoplanet/) of the location to return trending information for. Global information is available by using 1 as the WOEID.">
+			<cfargument name="exclude" required="false" hint="Setting this equal to hashtags will remove all hashtags from the trends list.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/trends/place.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getTrendsAvailable" output="false" access="public" returntype="String" 
+		hint="Returns the locations that Twitter has trending topic information for. The response is an array of 'locations' that encode the location’s WOEID (http://developer.yahoo.com/geo/geoplanet/) and some other human-readable information such as a canonical name and country the location belongs in.">
+			<cfargument name="accessToken" required="true">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/trends/available.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getTrendsClosest" output="false" access="public" returntype="String" 
+		hint="Returns the locations that Twitter has trending topic information for, closest to a specified location. The response is an array of 'locations' that encode the location’s WOEID (http://developer.yahoo.com/geo/geoplanet/) and some other human-readable information such as a canonical name and country the location belongs in.">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="lat" required="false" hint="If provided with a long parameter the available trend locations will be sorted by distance, nearest to furthest, to the co-ordinate pair. The valid ranges for longitude is -180.0 to +180.0 (West is negative, East is positive) inclusive.">
+			<cfargument name="long" required="false" hint="If provided with a lat parameter the available trend locations will be sorted by distance, nearest to furthest, to the co-ordinate pair. The valid ranges for longitude is -180.0 to +180.0 (West is negative, East is positive) inclusive.">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/trends/closest.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<!--- ------------ --->
+	<!--- HELP METHODS --->
+	<!--- ------------ --->
+
+	<cffunction name="getApplicationRateLimitStatus" output="false" access="public" returntype="String" 
+		hint="Returns the current rate limits for methods belonging to the specified resource families. (https://dev.twitter.com/rest/reference/get/application/rate_limit_status) ">
+			<cfargument name="accessToken" required="true">
+			<cfargument name="resources" required="false" hint="A comma-separated list of resource families you want to know the current rate limit disposition for. For best performance, only specify the resource families pertinent to your application. Example Values: statuses,friends,trends,help">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/application/rate_limit_status.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getHelpConfiguration" output="false" access="public" returntype="String" 
+		hint="Returns the current configuration used by Twitter including twitter.com slugs which are not usernames, maximum photo resolutions, and t.co URL lengths. It is recommended applications request this endpoint when they are loaded, but no more than once a day.">
+			<cfargument name="accessToken" required="true">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/help/configuration.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getHelpLanguages" output="false" access="public" returntype="String" 
+		hint="Returns the list of languages supported by Twitter along with the language code supported by Twitter. The language code may be formatted as ISO 639-1 alpha-2 (en), ISO 639-3 alpha-3 (msa), or ISO 639-1 alpha-2 combined with an ISO 3166-1 alpha-2 localization (zh-tw).">
+			<cfargument name="accessToken" required="true">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/help/languages.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getHelpPrivacy" output="false" access="public" returntype="String" 
+		hint="Returns Twitter’s Privacy Policy. (http://twitter.com/privacy) ">
+			<cfargument name="accessToken" required="true">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/help/privacy.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
+	<cffunction name="getHelpTOS" output="false" access="public" returntype="String" 
+		hint="Returns the Twitter Terms of Service. (http://twitter.com/tos) Note: these are not the same as the Developer Rules of the Road. (https://dev.twitter.com/overview/terms/rules-of-the-road)">
+			<cfargument name="accessToken" required="true">
+			<cfset var local = {}>
+			<cfset local.method = "get">
+			<cfset local.accessToken = arguments.accessToken>
+			<cfset structDelete(arguments, "accessToken")>
+			<cfset local.request = variables.instance.cfScribeObject.setRequest(uri="https://api.twitter.com/1.1/help/tos.json",method=local.method)>
+			<cfset local.request = variables.instance.cfScribeObject.setRequestParams(method=local.method,stctParams=arguments,objRequest=local.request)>
+			<cfset local.signRequest = variables.instance.cfScribeObject.setSignRequest(accessToken=local.accessToken,request=local.request)>
+			<cfreturn local.request.send() />
+	</cffunction>
+
 	<!--- blank --->
 	<!---
 	<cffunction name="get" output="false" access="public" returntype="String" 
