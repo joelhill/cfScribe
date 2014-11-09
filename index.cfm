@@ -1,26 +1,3 @@
-<cfparam name="url.oauth_token" default="" />
-<cfparam name="url.oauth_verifier" default="" />
-
-<cfif isdefined("form.btnTwitter")>
-		<!--- Create our session to store the required keys for this user --->
-		<cfset session.user = {}>
-		<!--- Create our cfScribe object --->
-		<cfset session.cfscribe = createObject("component", "cfScribe").twitterInit(force_login=false)>
-		<!--- Create our twitter object --->
-		<cfset session.cfTwitterAPI = createObject("component", "cfTwitterAPI").init(cfScribeObject=session.cfscribe)>
-        <cfif !isDefined("session.user.requestToken")>
-            <cfset session.user.requestToken = session.cfscribe.getRequestToken()>
-        </cfif>
-		<cflocation url="#session.cfscribe.getAuthorizationUrl(session.user.requestToken)#" addtoken="false">
-</cfif>
-
-<cfif len(url.oauth_token) AND len(url.oauth_verifier)>
-	<cfset session.user.verifier = session.cfscribe.getVerifier(url.oauth_verifier)>
-	<cfset session.user.accessToken = session.cfscribe.getAccessToken(verifier=session.user.verifier,requestToken=session.user.requestToken)>
-	<cflocation url="success.cfm" addtoken="false" />
-</cfif>
-
-
 <html lang="en">
     <head>
         <title>cfScribe</title>
@@ -42,22 +19,23 @@
 
         <div class="form-box" id="login-box">
             <div class="header">cfScribe Examples</div>
-            <form action="<cfoutput>#CGI.SCRIPT_NAME#</cfoutput>" method="post">
-                <div class="body bg-gray">
+
+            <div class="body bg-gray">
+                <form action="authTwitter.cfm?auth=1" method="post">
                     <div class="form-group">
                         <button type="submit" name="btnTwitter" class="btn btn-info btn-block">Twitter</button>
-                    </div> 
-                    <div class="form-group">
-                        <button type="submit" name="btnFacebook" class="btn btn-primary btn-block">Facebook</button>
-                    </div>         
-                    <div class="form-group">
-                        <button type="submit" name="btnGoogle" class="btn btn-danger btn-block">Google+</button>
                     </div>
+                </form>
+                <div class="form-group">
+                    <button type="submit" name="btnFacebook" class="btn btn-primary btn-block">Facebook</button>
                 </div>
-                <div class="footer">                                                               
-                    <button type="submit" class="btn bg-olive btn-block disabled">Sign me in</button>
+                <div class="form-group">
+                    <button type="submit" name="btnGoogle" class="btn btn-danger btn-block">Google+</button>
                 </div>
-            </form>
+            </div>
+            <div class="footer">
+                <button type="submit" class="btn bg-olive btn-block disabled">Sign me in</button>
+            </div>
 
             <div class="margin">
                 <span><a href="/">home</a></span>
