@@ -7,6 +7,7 @@
     <!--- SERVICE INIT --->
 	<cffunction name="twitterInit" returntype="Any">
 		<cfargument name="force_login" type="boolean" required="true" default="false">
+		<cfargument name="callback" type="string" required="false" default="" hint="used to customize the default callback URL">
 		<cfset var local = {}>
 		<cfset local.config = createObject("component", "config").twitterInit()>
 		<cfset local.paths = []>
@@ -20,6 +21,11 @@
 		<cfelse>
 			<cfset variables.instance.TwitterApi = variables.instance.javaloader.create("org.scribe.builder.api.TwitterApi")>
 		</cfif>
+		<cfif arguments.callback neq "">
+			<cfset local.config.setCallback(arguments.callback)>
+		</cfif>
+		<cfdump var="#local.config.getCallback()#">
+		<cfabort>
 		<cfset variables.instance.verb = variables.instance.javaloader.create("org.scribe.model.Verb")>
 		<cfset variables.instance.scribeService = variables.instance.javaloader.create("org.scribe.builder.ServiceBuilder").init()
 									   			  .provider(variables.instance.TwitterApi.getClass())

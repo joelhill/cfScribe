@@ -15,11 +15,11 @@
 		<cfset variables.instance.httpCorePath = "#GetDirectoryFromPath(GetCurrentTemplatePath())#components/httpcore-4.3.2.jar">
 		<cfset variables.instance.httpMimePath = "#GetDirectoryFromPath(GetCurrentTemplatePath())#components/httpmime-4.3.5.jar">
 
-		<cfset variables.instance.callback = "http://cfscribe.local/index.cfm">
+		<cfset variables.instance.callback = "http://cfscribe.local/authTwitter.cfm">
 		<cfreturn this />
 	</cffunction>
 	
-	
+	<!--- getters --->
 	<cffunction name="getConsumerKey" access="public" returntype="String">		
 		<cfreturn variables.instance.consumerKey>
 	</cffunction>
@@ -56,7 +56,31 @@
 		<cfreturn variables.instance.callback>
 	</cffunction>
 	
+	<!--- setters --->
+	<cffunction name="setConsumerKey" access="public" returntype="void">
+		<cfargument name="consumerKey" required="true" type="string">
+		<cfset variables.instance.consumerKey = arguments.consumerKey>
+	</cffunction>
+
+	<cffunction name="setConsumerSecret" access="public" returntype="void">
+		<cfargument name="consumerSecret" required="true" type="string">
+		<cfset variables.instance.consumerSecret = arguments.consumerSecret>
+	</cffunction>
 	
+	<cffunction name="setAuthKey" access="public" returntype="void">
+		<cfargument name="authKey" required="true" type="string">
+		<cfset variables.instance.authKey = arguments.authKey>
+	</cffunction>
+
+	<cffunction name="setAuthSecret" access="public" returntype="void">
+		<cfargument name="authSecret" required="true" type="string">
+		<cfset variables.instance.authSecret = arguments.authSecret>
+	</cffunction>
+
+	<cffunction name="setCallback" access="public" returntype="void" hint="call back url from api">
+		<cfargument name="callback" required="true" type="string">
+		<cfset variables.instance.callback = arguments.callback>
+	</cffunction>
 
 
 </cfcomponent>

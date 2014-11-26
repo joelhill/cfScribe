@@ -5,7 +5,7 @@
 		<!--- Create our session to store the required keys for this user --->
 		<cfset session.user = {}>
 		<!--- Create our cfScribe object --->
-		<cfset session.cfscribe = createObject("component", "cfScribe").twitterInit(force_login=true)>
+		<cfset session.cfscribe = createObject("component", "cfScribe").twitterInit(force_login=true,callback="http://cfscribe.local/authTwitter.cfm?works=1")>
 		<!--- Create our twitter object --->
 		<cfset session.cfTwitterAPI = createObject("component", "cfTwitterAPI").init(cfScribeObject=session.cfscribe)>
         <cfif !isDefined("session.user.requestToken")>
