@@ -24,8 +24,6 @@
 		<cfif arguments.callback neq "">
 			<cfset local.config.setCallback(arguments.callback)>
 		</cfif>
-		<cfdump var="#local.config.getCallback()#">
-		<cfabort>
 		<cfset variables.instance.verb = variables.instance.javaloader.create("org.scribe.model.Verb")>
 		<cfset variables.instance.scribeService = variables.instance.javaloader.create("org.scribe.builder.ServiceBuilder").init()
 									   			  .provider(variables.instance.TwitterApi.getClass())
