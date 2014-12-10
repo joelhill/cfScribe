@@ -24,6 +24,7 @@
 		<cfif arguments.callback neq "">
 			<cfset local.config.setCallback(arguments.callback)>
 		</cfif>
+		<cfset variables.instance.token = variables.instance.javaloader.create("org.scribe.model.Token")>
 		<cfset variables.instance.verb = variables.instance.javaloader.create("org.scribe.model.Verb")>
 		<cfset variables.instance.scribeService = variables.instance.javaloader.create("org.scribe.builder.ServiceBuilder").init()
 									   			  .provider(variables.instance.TwitterApi.getClass())
@@ -58,6 +59,12 @@
 	</cffunction>
 	
 	<!--- SETTER FUNCTIONS---> 
+	<cffunction name="setRequestToken" output="false" access="public" returntype="any">
+		<cfargument name="token" required="true" type="string">
+		<cfargument name="tokenSecret" required="true" type="string">
+		<cfreturn variables.instance.token.init(arguments.token,arguments.tokenSecret)>
+	</cffunction>
+	
 	<cffunction name="setRequest" output="false" access="public" returntype="string">
 		<cfargument name="URI" required="true">
 		<cfargument name="method" required="true">
