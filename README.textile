@@ -1,25 +1,23 @@
-h2. cfScribe, the simple OAuth Coldfusion lib!!!
+h2. cfScribe, the simple OAuth CFML Library
 
-h3. cfScribe runs on top of "fernandezpablo85 / scribe-java":http://github.com/fernandezpablo85/scribe-java/ library that supports all major 1.0a and 2.0 OAuth APIs out-of-the-box:
+h3. cfScribe runs on top of "fernandezpablo85 / scribe-java":http://github.com/fernandezpablo85/scribe-java/ library that supports all major 1.0a to 2.0 OAuth APIs out-of-the-box. Examples include:
 
 * Google
-
 * Facebook
-
 * Yahoo
-
 * LinkedIn
-
 * Twitter
-
 * Foursquare
-
 * Evernote
-
 * Vimeo
-
 * Yammer
+* many more...
 
-h1. About me
+_cfScribe is still in development_
 
-Follow me: "@jiggidyuo":http://twitter.com/jiggidyuo
+For questions, please contact the developers below.
+
+h2. About Us
+
+Follow Joel Hill: "@jiggidyuo":http://twitter.com/jiggidyuo
+Follow Jordan Michaels: "@utdream":http://twitter.com/utdream
